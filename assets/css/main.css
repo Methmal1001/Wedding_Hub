@@ -1,0 +1,284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+   Base
+------------------------------------------------------------------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  body {
+    @apply bg-ivory font-sans text-charcoal antialiased;
+    font-weight: 400;
+  }
+
+  ::selection {
+    background: #F7E1E3;
+    color: #B4637A;
+  }
+
+  :focus-visible {
+    outline: 2px solid #C9A86A;
+    outline-offset: 3px;
+  }
+
+  img {
+    max-width: 100%;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Reusable components
+------------------------------------------------------------------- */
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-site px-4 sm:px-6 lg:px-10;
+  }
+
+  .eyebrow {
+    @apply font-sans text-[11px] font-medium uppercase tracking-[0.32em] text-gold-dark sm:text-xs;
+  }
+
+  .heading-xl {
+    @apply font-serif font-semibold leading-[1.05] text-charcoal;
+  }
+
+  .btn {
+    @apply relative inline-flex min-h-[48px] items-center justify-center gap-2 overflow-hidden rounded-full px-7 text-sm font-medium tracking-wide transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply btn bg-rosewood text-white shadow-soft hover:-translate-y-0.5 hover:bg-rosewood-700 hover:shadow-lift active:translate-y-0;
+  }
+
+  .btn-gold {
+    @apply btn bg-gradient-to-r from-gold-light via-[#EBDDB9] to-gold text-rosewood-900 shadow-soft hover:-translate-y-0.5 hover:from-white hover:to-gold-light hover:shadow-lift active:translate-y-0;
+  }
+
+  .btn-outline {
+    @apply btn border border-rosewood/30 bg-transparent text-rosewood hover:border-rosewood hover:bg-rosewood hover:text-white;
+  }
+
+  .btn-ghost-light {
+    @apply btn border border-white/50 bg-white/10 text-white backdrop-blur-sm hover:border-white hover:bg-white hover:text-rosewood;
+  }
+
+  /* Button shine sweep */
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s ease;
+  }
+  .btn-shine:hover::after {
+    transform: translateX(120%);
+  }
+
+  .card-surface {
+    @apply rounded-3xl bg-white shadow-soft ring-1 ring-rosewood/5;
+  }
+
+  .ornament {
+    @apply flex items-center justify-center gap-3 text-gold;
+  }
+  .ornament::before,
+  .ornament::after {
+    content: '';
+    @apply h-px w-10 bg-gradient-to-r from-transparent to-gold sm:w-16;
+  }
+  .ornament::after {
+    @apply bg-gradient-to-l;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Scroll reveal (driven by the v-reveal directive)
+------------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------------
+   Generic keyframes
+------------------------------------------------------------------- */
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(4deg);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slow-zoom {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-float-soft {
+  animation: float-soft 7s ease-in-out infinite;
+}
+
+.animate-heart-pop {
+  animation: heart-pop 0.45s ease;
+}
+
+/* Hero entrance – classes applied after the splash finishes */
+.hero-in > * {
+  opacity: 0;
+  animation: fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.hero-in > *:nth-child(1) { animation-delay: 0.1s; }
+.hero-in > *:nth-child(2) { animation-delay: 0.25s; }
+.hero-in > *:nth-child(3) { animation-delay: 0.4s; }
+.hero-in > *:nth-child(4) { animation-delay: 0.55s; }
+.hero-in > *:nth-child(5) { animation-delay: 0.7s; }
+
+.hero-bg-zoom {
+  animation: slow-zoom 9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Hide scrollbar on horizontally scrolling chip rows */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ------------------------------------------------------------------
+   Vue transitions
+------------------------------------------------------------------- */
+.splash-leave-active {
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.65, 0, 0.35, 1), filter 0.9s ease;
+}
+.splash-leave-to {
+  opacity: 0;
+  transform: scale(1.08);
+  filter: blur(6px);
+}
+
+.menu-enter-active,
+.menu-leave-active {
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.menu-enter-from,
+.menu-leave-to {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.results-enter-active,
+.results-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.results-enter-from,
+.results-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+}
+.list-leave-active {
+  position: absolute;
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero-in > *,
+  .hero-bg-zoom,
+  .animate-float-soft {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
+/* Offset hash-link scrolling for the sticky navbar */
+section[id] {
+  scroll-margin-top: 80px;
+}
