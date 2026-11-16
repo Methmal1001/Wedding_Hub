@@ -27,16 +27,21 @@ Restart the dev server after changing `tailwind.config.js` or `nuxt.config.js`.
 
 - `/` – animated splash screen + homepage
 - `/catalog` – searchable vendor catalog. Filters live in the URL, e.g. `/catalog?category=photography&loc=Galle`
+- `/catalog?category=<key>` – category page (rotating banner, service tiles, side banners)
+- `/sub-category/<service>` – service page with listings (grid / image view)
+- `/listing/<service>/<Listing-Name>` – listing details page
+- `/auth/login`, `/auth/register` – animated log-in and sign-up portal (`/login` and `/register` redirect here)
+- `/profile` – user profile: countdown, checklist, saved vendors, enquiries, edit profile, settings
 
-## Splash artwork (optional)
+## Accounts (demo only)
 
-By default the splash shows a hand-painted (watercolour-style) SVG couple. To use your own painting instead, save a **transparent PNG** of the couple (groom on the left, bride on the right) as:
+There is no backend, so accounts are stored in the browser's `localStorage` (passwords are salted and hashed, but this is still only suitable for a demo – a real site must authenticate on a server). Each browser has its own accounts.
 
-```
-assets/images/splash-couple.png
-```
+Demo account: `demo@weddinghub.lk` / `Demo@2026` – or press **Try the demo account** on the log-in page.
 
-The splash picks it up automatically after a dev-server reload or a rebuild. The painting is split along the gap between the couple, so the groom walks in from the left and the bride from the right, and they join into the full picture.
+## Splash animation
+
+The splash couple is a hand-drawn, single-line sketch (`components/SplashBride.vue` and `components/SplashGroom.vue`, both inline SVG). The bride walks in from the left and the groom from the right while their outlines draw themselves. They meet face to face and join hands, then the logo and tagline appear.
 
 ## Structure
 

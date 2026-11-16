@@ -48,82 +48,30 @@
 
     <!-- Stage -->
     <div class="relative flex h-full flex-col items-center justify-center px-4 pt-[5vh]">
-      <!--
-        Painted couple (assets/images/splash-couple.png). The same painting is
-        rendered twice and clipped along the gap between them, so the groom's
-        half walks in from the left, the bride's half from the right, and they
-        join into the complete watercolour when they meet.
-      -->
-      <div v-if="art" class="stage stage--painted relative">
-        <div class="meet-glow absolute left-1/2 top-[38%]" />
-        <div class="floor-shadow absolute bottom-[1%] left-1/2 -translate-x-1/2" />
+      <!-- Line-art couple: one shared 360×460 scene, one layer per person -->
+      <div class="stage relative">
+        <div class="meet-glow absolute left-[55%] top-[30%]" />
+        <div class="floor-shadow absolute bottom-[1%] left-[44%] -translate-x-1/2" />
 
-        <div class="painted painted--groom groom-enter absolute inset-0 z-10">
-          <div class="groom-walk h-full w-full">
-            <img :src="art" alt="" class="painted-img" draggable="false">
-          </div>
-        </div>
-        <div class="painted painted--bride bride-enter absolute inset-0 z-20">
+        <!-- Step 2: bride walks in from the LEFT (side profile, facing right) -->
+        <div class="bride-enter absolute inset-0 z-10">
           <div class="bride-walk h-full w-full">
-            <img :src="art" alt="" class="painted-img" draggable="false">
-          </div>
-        </div>
-        <span class="sr-only">A watercolour painting of a bride and groom meeting and smiling at each other.</span>
-
-        <div class="hearts pointer-events-none absolute left-[54%] top-[3%] z-30">
-          <svg class="big-heart" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M12 21s-7.5-4.6-9.3-9.2C1.4 8.5 3.4 5 7 5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.6 0 5.6 3.5 4.3 6.8C19.5 16.4 12 21 12 21Z"
-              fill="#B4637A"
-            />
-          </svg>
-          <svg
-            v-for="(h, i) in hearts"
-            :key="`ph${i}`"
-            class="mini-heart"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            :style="{ '--hx': h.x + 'px', '--hs': h.s, animationDelay: h.delay + 's' }"
-          >
-            <path
-              d="M12 21s-7.5-4.6-9.3-9.2C1.4 8.5 3.4 5 7 5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.6 0 5.6 3.5 4.3 6.8C19.5 16.4 12 21 12 21Z"
-              :fill="h.c"
-            />
-          </svg>
-          <span class="burst-ring" />
-        </div>
-      </div>
-
-      <!-- Fallback: hand-drawn line-art couple (used until the painting is added) -->
-      <div v-else class="stage relative">
-        <div class="meet-glow absolute left-1/2 top-[34%]" />
-        <div class="floor-shadow absolute bottom-[-1.5%] left-1/2 -translate-x-1/2" />
-
-        <!-- Step 2: groom walks in from the LEFT (side profile, facing right) -->
-        <div class="groom-enter absolute bottom-0 left-0 z-10">
-          <div class="groom-lean h-full w-full">
-            <div class="groom-walk h-full w-full">
-              <SplashGroom />
-            </div>
+            <SplashBride />
           </div>
         </div>
 
-        <!-- Step 3: bride walks in from the RIGHT (side profile, facing left) -->
-        <div class="bride-enter absolute bottom-0 z-20">
-          <div class="bride-lean h-full w-full">
-            <div class="bride-walk h-full w-full">
-              <SplashBride />
-            </div>
+        <!-- Step 3: groom walks in from the RIGHT (side profile, facing left) -->
+        <div class="groom-enter absolute inset-0 z-20">
+          <div class="groom-walk h-full w-full">
+            <SplashGroom />
           </div>
         </div>
+        <span class="sr-only">A line drawing of a bride and groom meeting face to face and holding hands.</span>
 
         <!-- Step 4: hearts between their faces -->
-        <div class="hearts pointer-events-none absolute left-1/2 top-[6%] z-30">
+        <div class="hearts pointer-events-none absolute left-[56%] top-[9%] z-30">
           <svg class="big-heart" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M12 21s-7.5-4.6-9.3-9.2C1.4 8.5 3.4 5 7 5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.6 0 5.6 3.5 4.3 6.8C19.5 16.4 12 21 12 21Z"
-              fill="#B4637A"
-            />
+            <path d="M12 21s-7.5-4.6-9.3-9.2C1.4 8.5 3.4 5 7 5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.6 0 5.6 3.5 4.3 6.8C19.5 16.4 12 21 12 21Z" fill="#B4637A" />
           </svg>
           <svg
             v-for="(h, i) in hearts"
@@ -133,10 +81,7 @@
             aria-hidden="true"
             :style="{ '--hx': h.x + 'px', '--hs': h.s, animationDelay: h.delay + 's' }"
           >
-            <path
-              d="M12 21s-7.5-4.6-9.3-9.2C1.4 8.5 3.4 5 7 5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.6 0 5.6 3.5 4.3 6.8C19.5 16.4 12 21 12 21Z"
-              :fill="h.c"
-            />
+            <path d="M12 21s-7.5-4.6-9.3-9.2C1.4 8.5 3.4 5 7 5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.6 0 5.6 3.5 4.3 6.8C19.5 16.4 12 21 12 21Z" :fill="h.c" />
           </svg>
           <span class="burst-ring" />
         </div>
@@ -173,15 +118,6 @@
 
 <script setup>
 const emit = defineEmits(['finished'])
-
-// Optional watercolour artwork. Vite resolves this at build time: if the file
-// isn't there the object is empty and the line-art couple is used instead
-// (no 404s, no broken images).
-const artwork = import.meta.glob('../assets/images/splash-couple.{png,webp,jpg,jpeg}', {
-  eager: true,
-  import: 'default'
-})
-const art = Object.values(artwork)[0] || ''
 
 // Time the scene is shown before the fade/zoom-out begins (ms).
 // The leave transition adds ~0.9s, so the full splash is ≈ 5.9s.
@@ -264,7 +200,7 @@ onBeforeUnmount(() => {
   --line: #6E3446;
 }
 
-/* ---------- Background: light green with soft light ---------- */
+/* ---------- Background: soft blush light ---------- */
 .splash-bg {
   background:
     radial-gradient(ellipse 60% 50% at 50% 40%, #FFFDFB 0%, rgba(255, 253, 251, 0) 70%),
@@ -348,19 +284,11 @@ onBeforeUnmount(() => {
 }
 
 /* ---------- Stage geometry ----------
-   Both SVGs use a 260×460 viewBox. The bride's box starts 200 units in,
-   so the couple overlaps into one 460×460 scene. */
+   Both SVGs share a 360×460 viewBox and fill the whole stage. */
 .stage {
   height: var(--fig-h);
-  width: var(--fig-h);
-}
-.groom-enter,
-.bride-enter {
-  height: var(--fig-h);
-  width: calc(var(--fig-h) * 260 / 460);
-}
-.bride-enter {
-  left: calc(var(--fig-h) * 200 / 460);
+  width: calc(var(--fig-h) * 360 / 460);
+  color: #2B2226; /* sketch ink */
 }
 
 /* ---------- Line-art drawing ---------- */
@@ -372,27 +300,22 @@ onBeforeUnmount(() => {
 .stage :deep(.figure) {
   fill-opacity: 0;
 }
-.stage :deep(.figure .lace) {
-  stroke-dasharray: 0.012 0.01;
-  stroke-dashoffset: 0;
-  opacity: 0;
-}
-.is-playing .groom-enter :deep(.figure path),
-.is-playing .groom-enter :deep(.figure circle) {
-  animation: draw-line 1.9s cubic-bezier(0.45, 0, 0.25, 1) 0.25s forwards;
+.stage :deep(.veil-fill) {
+  fill-opacity: 0.55;
 }
 .is-playing .bride-enter :deep(.figure path),
 .is-playing .bride-enter :deep(.figure circle) {
-  animation: draw-line 1.9s cubic-bezier(0.45, 0, 0.25, 1) 0.5s forwards;
+  animation: draw-line 2s cubic-bezier(0.45, 0, 0.25, 1) 0.25s forwards;
 }
-.is-playing .groom-enter :deep(.figure) {
-  animation: fill-in 1.1s ease 1.2s forwards;
+.is-playing .groom-enter :deep(.figure path),
+.is-playing .groom-enter :deep(.figure circle) {
+  animation: draw-line 2s cubic-bezier(0.45, 0, 0.25, 1) 0.5s forwards;
 }
 .is-playing .bride-enter :deep(.figure) {
-  animation: fill-in 1.1s ease 1.45s forwards;
+  animation: fill-in 1s ease 1.1s forwards;
 }
-.is-playing .stage :deep(.figure .lace) {
-  animation: fade-in-full 0.8s ease 2s forwards;
+.is-playing .groom-enter :deep(.figure) {
+  animation: fill-in 1s ease 1.35s forwards;
 }
 @keyframes draw-line {
   to { stroke-dashoffset: 0; }
@@ -402,16 +325,16 @@ onBeforeUnmount(() => {
 }
 
 /* ---------- Step 2 & 3: walking in from opposite sides ---------- */
-.groom-enter {
+.bride-enter {
   transform: translateX(-80vw);
 }
-.bride-enter {
+.groom-enter {
   transform: translateX(80vw);
 }
-.is-playing .groom-enter {
+.is-playing .bride-enter {
   animation: enter-left 1.9s var(--ease-walk) 0.25s forwards;
 }
-.is-playing .bride-enter {
+.is-playing .groom-enter {
   animation: enter-right 1.9s var(--ease-walk) 0.5s forwards;
 }
 @keyframes enter-left {
@@ -424,10 +347,10 @@ onBeforeUnmount(() => {
 }
 
 /* Body bob while walking (even count, so it ends at rest) */
-.is-playing .groom-walk {
+.is-playing .bride-walk {
   animation: walk-bob 0.475s ease-in-out 0.25s 4 alternate;
 }
-.is-playing .bride-walk {
+.is-playing .groom-walk {
   animation: walk-bob 0.475s ease-in-out 0.5s 4 alternate;
 }
 @keyframes walk-bob {
@@ -441,117 +364,55 @@ onBeforeUnmount(() => {
   transform-origin: 0 0;
 }
 .is-playing .stage :deep(.leg--near) {
-  animation: stride 0.95s ease-in-out 0.25s 2;
+  animation: stride 0.95s ease-in-out 0.5s 2;
 }
 .is-playing .stage :deep(.leg--far) {
-  animation: stride 0.95s ease-in-out 0.25s 2 reverse;
+  animation: stride 0.95s ease-in-out 0.5s 2 reverse;
 }
 @keyframes stride {
   0%, 50%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-11deg); }
-  75% { transform: rotate(11deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
 }
 
 /* Bride's gown & veil sway as she walks */
 .stage :deep(.skirt),
 .stage :deep(.veil) {
   transform-box: fill-box;
-  transform-origin: 50% 0%;
+  transform-origin: 70% 0%;
 }
 .is-playing .stage :deep(.skirt) {
-  animation: gown-sway 0.95s ease-in-out 0.5s 2;
+  animation: gown-sway 0.95s ease-in-out 0.25s 2;
 }
 .is-playing .stage :deep(.veil) {
-  animation: veil-flow 2s ease-out 0.5s 1;
+  animation: veil-flow 2.1s ease-out 0.25s 1;
 }
 @keyframes gown-sway {
   0%, 100% { transform: skewX(0deg); }
-  25% { transform: skewX(-2deg); }
-  75% { transform: skewX(2deg); }
+  25% { transform: skewX(2deg); }
+  75% { transform: skewX(-2deg); }
 }
 @keyframes veil-flow {
-  0% { transform: skewX(-12deg) scaleX(1.08); }
+  0% { transform: skewX(14deg) scaleX(1.1); }
   100% { transform: none; }
 }
 
-
-/* ---------- Painted (watercolour) couple ---------- */
-.stage--painted {
-  height: var(--fig-h);
-  width: calc(var(--fig-h) * 2 / 3);
-}
-.stage--painted .groom-enter,
-.stage--painted .bride-enter {
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-/* Multiply makes the white watercolour paper disappear into the background */
-.painted {
-  mix-blend-mode: multiply;
-}
-.painted-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  user-select: none;
-  opacity: 0;
-  filter: blur(8px) saturate(0.6);
-}
-.is-playing .painted--groom .painted-img {
-  animation: paint-in 1.6s ease-out 0.25s forwards;
-}
-.is-playing .painted--bride .painted-img {
-  animation: paint-in 1.6s ease-out 0.5s forwards;
-}
-@keyframes paint-in {
-  to { opacity: 1; filter: blur(0) saturate(1); }
-}
-/* Split along the natural gap between the couple (between their faces,
-   linked arms, bouquet and hem) so each half reads as one person */
-.painted--groom {
-  clip-path: polygon(0 0, 54% 0, 54% 22%, 51% 35%, 46% 50%, 45% 75%, 43% 100%, 0 100%);
-}
-.painted--bride {
-  clip-path: polygon(54% 0, 100% 0, 100% 100%, 43% 100%, 45% 75%, 46% 50%, 51% 35%, 54% 22%);
-}
-.stage--painted .big-heart {
-  width: calc(var(--fig-h) * 0.07);
-  height: calc(var(--fig-h) * 0.07);
-}
-
-/* ---------- Step 4: they meet face to face ---------- */
-/* Arms hang while walking, then rise so their hands join */
+/* ---------- Step 4: they meet and join hands ---------- */
 .stage :deep(.arm) {
   transform-box: view-box;
   transform-origin: 0 0;
-  transform: rotate(32deg);
+}
+.stage :deep(.arm--bride) {
+  transform: rotate(28deg);
+}
+.stage :deep(.arm--groom) {
+  transform: rotate(-30deg);
 }
 .is-playing .stage :deep(.arm) {
   animation: arm-raise 0.9s cubic-bezier(0.34, 1.2, 0.64, 1) 2.3s forwards;
 }
 @keyframes arm-raise {
   to { transform: rotate(0deg); }
-}
-
-/* Gentle lean towards each other – foreheads almost touching */
-.groom-lean {
-  transform-origin: 66% 98%;
-}
-.bride-lean {
-  transform-origin: 42% 98%;
-}
-.is-playing .groom-lean {
-  animation: lean-groom 1s cubic-bezier(0.34, 1.3, 0.64, 1) 2.65s forwards;
-}
-.is-playing .bride-lean {
-  animation: lean-bride 1s cubic-bezier(0.34, 1.3, 0.64, 1) 2.65s forwards;
-}
-@keyframes lean-groom {
-  to { transform: rotate(2.6deg); }
-}
-@keyframes lean-bride {
-  to { transform: rotate(-2.6deg); }
 }
 
 .meet-glow {
@@ -698,10 +559,6 @@ onBeforeUnmount(() => {
   .bride-enter,
   .stage :deep(.arm) {
     transform: none;
-  }
-  .painted-img {
-    opacity: 1;
-    filter: none;
   }
   .stage :deep(.figure path),
   .stage :deep(.figure circle) {

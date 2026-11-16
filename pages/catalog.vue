@@ -3,7 +3,16 @@
     <AppNavbar />
 
     <main>
-      <!-- Header -->
+      <!-- Category page: rotating main banner -->
+      <CategoryHero
+        v-if="activeCategory"
+        :key="activeCategory.key"
+        :category="activeCategory"
+        :slides="heroSlides"
+        :tagline="categoryTagline(activeCategory.key)"
+      />
+
+      <!-- Header (on a category page this becomes the search & category toolbar) -->
       <section class="relative z-10 border-b border-rosewood/10 bg-gradient-to-b from-blush-light via-blush-light/60 to-ivory">
         <!-- Decorative blobs are clipped on their own layer so the "More" menu can overflow the header -->
         <div aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
@@ -11,15 +20,15 @@
           <div class="absolute -left-40 top-10 h-[320px] w-[320px] rounded-full bg-gold-light/30 blur-3xl" />
         </div>
 
-        <div class="container-site relative pb-8 pt-10 sm:pt-14">
-          <nav aria-label="Breadcrumb" class="text-xs text-charcoal-soft">
+        <div class="container-site relative pb-8" :class="activeCategory ? 'pt-7' : 'pt-10 sm:pt-14'">
+          <nav v-if="!activeCategory" aria-label="Breadcrumb" class="text-xs text-charcoal-soft">
             <NuxtLink to="/" class="transition hover:text-rosewood">Home</NuxtLink>
             <span class="mx-2 text-charcoal-soft/40">/</span>
             <span class="text-rosewood">Catalog</span>
           </nav>
 
-          <div class="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
+          <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between" :class="{ 'mt-4': !activeCategory }">
+            <div v-if="!activeCategory">
               <h1 class="heading-xl text-[2.6rem] sm:text-6xl">Catalog</h1>
               <p class="mt-2 max-w-xl text-charcoal-soft">
                 Browse Sri Lanka's finest wedding professionals – compare portfolios, prices and reviews in one place.
@@ -27,7 +36,7 @@
             </div>
 
             <!-- Search + location + sort -->
-            <form class="flex w-full flex-col gap-2.5 sm:flex-row lg:max-w-2xl" role="search" @submit.prevent="applySearch">
+            <form class="flex w-full flex-col gap-2.5 sm:flex-row" :class="{ 'lg:max-w-2xl': !activeCategory }" role="search" @submit.prevent="applySearch">
               <label class="relative flex-1">
                 <span class="sr-only">Search Wedding Hub services</span>
                 <AppIcon name="search" :size="18" class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-charcoal-soft" />
@@ -63,7 +72,7 @@
           </div>
 
           <!-- Category chips -->
-          <div class="relative mt-7 flex items-center gap-2">
+          <div class="relative flex items-center gap-2" :class="activeCategory ? 'mt-5' : 'mt-7'">
             <div class="chip-row no-scrollbar -ml-4 flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1 pl-4 pr-6 sm:ml-0 sm:pl-0">
               <button
                 v-for="c in primaryChips"
@@ -117,75 +126,94 @@
 
       <!-- Results -->
       <section class="container-site py-10 sm:py-12">
-        <!-- Sub-categories of the selected category -->
-        <div v-if="activeCategory" class="mb-8">
-          <p class="eyebrow">{{ activeCategory.name }}</p>
-          <div class="mt-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              class="sub-chip"
-              :class="{ 'is-on': !filters.sub }"
-              @click="update({ sub: '' })"
+        <div :class="activeCategory ? 'grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] xl:gap-12' : ''">
+          <div class="min-w-0">
+            <!-- Sub-categories of the selected category -->
+            <div v-if="activeCategory" :class="{ 'mb-10': showListings }">
+              <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p class="eyebrow">Browse by service</p>
+                  <h2 class="mt-2 font-serif text-3xl font-semibold">{{ activeCategory.name }}</h2>
+                </div>
+                <p class="text-sm text-charcoal-soft">Choose a service to see its vendors</p>
+              </div>
+              <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-4">
+                <NuxtLink
+                  v-for="tile in subTiles"
+                  :key="tile.name"
+                  :to="catalogLink({ category: activeCategory.key, sub: tile.name, loc: filters.loc })"
+                  class="sub-tile group block"
+                >
+                  <span class="block aspect-[4/3] overflow-hidden rounded-xl">
+                    <img :src="tile.image" alt="" class="h-full w-full object-cover transition duration-700 group-hover:scale-110" loading="lazy">
+                  </span>
+                  <span class="mt-2.5 block px-1 text-left text-[13px] font-semibold leading-snug text-charcoal transition group-hover:text-rosewood sm:text-sm">
+                    {{ tile.name }}
+                  </span>
+                  <span class="block px-1 pb-0.5 text-left text-[11px] text-charcoal-soft">
+                    {{ tile.count ? `${tile.count} listing${tile.count > 1 ? 's' : ''}` : 'Explore' }}
+                  </span>
+                </NuxtLink>
+              </div>
+            </div>
+            <!-- Listings: on a category page only shown when searching (each service has its own page) -->
+            <template v-if="showListings">
+            <p
+              v-if="subFallback"
+              class="mb-6 flex items-start gap-3 rounded-2xl bg-gold-light/30 px-4 py-3 text-sm text-charcoal ring-1 ring-gold/30"
+              role="status"
             >
-              All {{ activeCategory.name }}
-            </button>
-            <button
-              v-for="sc in activeCategory.subcategories"
-              :key="sc"
-              type="button"
-              class="sub-chip"
-              :class="{ 'is-on': filters.sub === sc }"
-              @click="update({ sub: sc })"
-            >
-              {{ sc }}
-            </button>
+              <AppIcon name="sparkles" :size="18" class="mt-0.5 shrink-0 text-gold-dark" />
+              <span>
+                No <strong>{{ filters.sub }}</strong> listings yet – showing everything in
+                <strong>{{ categoryName(filters.category) }}</strong>.
+              </span>
+            </p>
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+              <p class="text-sm text-charcoal-soft" aria-live="polite">
+                Showing <span class="font-semibold text-charcoal">{{ visible.length }}</span> of
+                <span class="font-semibold text-charcoal">{{ results.length }}</span>
+                {{ results.length === 1 ? 'professional' : 'professionals' }}
+                <template v-if="summary"> for <span class="font-semibold text-rosewood">{{ summary }}</span></template>
+              </p>
+              <button v-if="hasFilters" type="button" class="text-sm font-medium text-rosewood underline-offset-4 hover:underline" @click="clearAll">
+                Clear all filters
+              </button>
+            </div>
+
+            <TransitionGroup v-if="results.length" tag="div" name="list" :class="activeCategory ? 'sm:grid-cols-2 xl:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-3'" class="relative grid gap-6 lg:gap-7">
+              <CatalogCard v-for="item in visible" :key="item.id" :item="item" />
+            </TransitionGroup>
+
+            <!-- Empty state -->
+            <div v-else class="card-surface flex flex-col items-center px-6 py-16 text-center">
+              <span class="grid h-16 w-16 place-items-center rounded-full bg-rosewood-50 text-rosewood">
+                <AppIcon name="search" :size="26" />
+              </span>
+              <h2 class="mt-5 font-serif text-2xl font-semibold">No professionals found</h2>
+              <p class="mt-2 max-w-md text-charcoal-soft">
+                Try a different search, another location, or browse every category.
+              </p>
+              <button type="button" class="btn-primary mt-6" @click="clearAll">Show all professionals</button>
+            </div>
+
+            <div v-if="visible.length < results.length" class="mt-12 flex justify-center">
+              <button type="button" class="btn-outline" @click="limit += PAGE_SIZE">
+                Load more
+                <AppIcon name="chevronDown" :size="16" />
+              </button>
+            </div>
+            </template>
           </div>
-        </div>
 
-        <p
-          v-if="subFallback"
-          class="mb-6 flex items-start gap-3 rounded-2xl bg-gold-light/30 px-4 py-3 text-sm text-charcoal ring-1 ring-gold/30"
-          role="status"
-        >
-          <AppIcon name="sparkles" :size="18" class="mt-0.5 shrink-0 text-gold-dark" />
-          <span>
-            No <strong>{{ filters.sub }}</strong> listings yet – showing everything in
-            <strong>{{ categoryName(filters.category) }}</strong>.
-          </span>
-        </p>
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <p class="text-sm text-charcoal-soft" aria-live="polite">
-            Showing <span class="font-semibold text-charcoal">{{ visible.length }}</span> of
-            <span class="font-semibold text-charcoal">{{ results.length }}</span>
-            {{ results.length === 1 ? 'professional' : 'professionals' }}
-            <template v-if="summary"> for <span class="font-semibold text-rosewood">{{ summary }}</span></template>
-          </p>
-          <button v-if="hasFilters" type="button" class="text-sm font-medium text-rosewood underline-offset-4 hover:underline" @click="clearAll">
-            Clear all filters
-          </button>
-        </div>
-
-        <TransitionGroup v-if="results.length" tag="div" name="list" class="relative grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
-          <CatalogCard v-for="item in visible" :key="item.id" :item="item" />
-        </TransitionGroup>
-
-        <!-- Empty state -->
-        <div v-else class="card-surface flex flex-col items-center px-6 py-16 text-center">
-          <span class="grid h-16 w-16 place-items-center rounded-full bg-rosewood-50 text-rosewood">
-            <AppIcon name="search" :size="26" />
-          </span>
-          <h2 class="mt-5 font-serif text-2xl font-semibold">No professionals found</h2>
-          <p class="mt-2 max-w-md text-charcoal-soft">
-            Try a different search, another location, or browse every category.
-          </p>
-          <button type="button" class="btn-primary mt-6" @click="clearAll">Show all professionals</button>
-        </div>
-
-        <div v-if="visible.length < results.length" class="mt-12 flex justify-center">
-          <button type="button" class="btn-outline" @click="limit += PAGE_SIZE">
-            Load more
-            <AppIcon name="chevronDown" :size="16" />
-          </button>
+          <!-- Category page: rotating side banners -->
+          <CategorySidebar
+            v-if="activeCategory"
+            :key="activeCategory.key"
+            :category-key="activeCategory.key"
+            :sub="filters.sub"
+            class="lg:sticky lg:top-24 lg:self-start"
+          />
         </div>
       </section>
     </main>
@@ -198,12 +226,8 @@
 <script setup>
 import { locations } from '~/data/locations'
 import { weddingCategories } from '~/data/weddingCategories'
-import { filterCatalog, sortOptions, categoryName } from '~/composables/useCatalog'
-
-useSeoMeta({
-  title: 'Catalog – Wedding Hub',
-  description: 'Browse wedding photographers, venues, bridal salons, florists, cakes and more across Sri Lanka.'
-})
+import { filterCatalog, sortOptions, categoryName, catalogLink } from '~/composables/useCatalog'
+import { categorySlides, categoryTagline, subcategoryTiles } from '~/composables/useCategoryPage'
 
 // Visiting the catalog counts as having seen the intro, so going back to the
 // homepage from here never replays the splash screen.
@@ -211,6 +235,11 @@ useSplash().finish()
 
 const route = useRoute()
 const router = useRouter()
+
+// Old-style links (/catalog?category=x&sub=y) open the sub-category page.
+if (route.query.sub && !route.query.q) {
+  await navigateTo(catalogLink({ sub: String(route.query.sub), loc: String(route.query.loc || ''), sort: String(route.query.sort || '') }), { replace: true })
+}
 const PAGE_SIZE = 9
 const limit = ref(PAGE_SIZE)
 
@@ -289,6 +318,16 @@ const moreChips = weddingCategories
 
 // Sub-category chips for the selected category
 const activeCategory = computed(() => weddingCategories.find((c) => c.key === filters.value.category))
+// A category page lists its services only; vendor cards appear on each
+// service's own page, or here when the visitor searches or picks a location.
+const showListings = computed(() => !activeCategory.value || !!(filters.value.q || filters.value.loc))
+const heroSlides = computed(() => (activeCategory.value ? categorySlides(activeCategory.value.key) : []))
+const subTiles = computed(() => (activeCategory.value ? subcategoryTiles(activeCategory.value.key) : []))
+useSeoMeta({
+  title: () => (activeCategory.value ? `${activeCategory.value.name} – Wedding Hub` : 'Catalog – Wedding Hub'),
+  description: 'Browse wedding photographers, venues, bridal salons, florists, cakes and more across Sri Lanka.'
+})
+
 const moreActive = computed(() => moreChips.find((c) => c.key === filters.value.category))
 
 const moreOpen = ref(false)
@@ -337,6 +376,12 @@ onBeforeUnmount(() => {
 }
 .sub-chip.is-on {
   @apply bg-rosewood-50 font-semibold text-rosewood-700 ring-rosewood/30;
+}
+.sub-tile {
+  @apply relative rounded-2xl bg-white p-2 ring-1 ring-charcoal/10 transition duration-300 hover:-translate-y-0.5 hover:shadow-soft hover:ring-rosewood/30;
+}
+.sub-tile.is-on {
+  @apply bg-rosewood-50 ring-2 ring-rosewood;
 }
 .select-pill {
   @apply h-12 w-full cursor-pointer appearance-none rounded-full border border-rosewood/15 bg-white pr-10 text-[15px] text-charcoal shadow-sm outline-none transition focus:border-rosewood/40 focus:ring-4 focus:ring-rosewood/10;

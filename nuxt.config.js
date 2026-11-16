@@ -5,6 +5,15 @@ export default defineNuxtConfig({
 
   modules: ['@nuxtjs/tailwindcss'],
 
+  // Accounts are stored in the browser, so pages that depend on the signed-in
+  // user render on the client. /login and /register are friendly shortcuts.
+  routeRules: {
+    '/profile': { ssr: false },
+    '/auth/**': { ssr: false },
+    '/login': { redirect: '/auth/login' },
+    '/register': { redirect: '/auth/register' }
+  },
+
   // main.css contains the @tailwind directives plus custom styles/animations
   tailwindcss: {
     cssPath: '~/assets/css/main.css'

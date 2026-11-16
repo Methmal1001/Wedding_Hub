@@ -18,10 +18,18 @@
       <div class="container-site flex h-9 items-center justify-between gap-4 text-[11px] tracking-[0.18em]">
         <p class="truncate uppercase">Sri Lanka's No. 1 Wedding Website</p>
         <div class="hidden items-center gap-5 uppercase sm:flex">
-          <button type="button" class="topbar-link" @click="comingSoon('Log in')">
+          <NuxtLink v-if="user" to="/profile" class="topbar-link">
             <AppIcon name="user" :size="14" />
-            Log in
-          </button>
+            Hi, {{ firstName }}
+          </NuxtLink>
+          <template v-else>
+            <NuxtLink to="/auth/login" class="topbar-link">
+              <AppIcon name="user" :size="14" />
+              Log in
+            </NuxtLink>
+            <span class="h-3 w-px bg-white/30" />
+            <NuxtLink to="/auth/register" class="topbar-link">Sign up</NuxtLink>
+          </template>
           <span class="h-3 w-px bg-white/30" />
           <button type="button" class="topbar-link" @click="go({ target: 'business' })">
             <AppIcon name="store" :size="14" />
@@ -103,12 +111,8 @@
             List Your Business
           </button>
 
-          <button
-            type="button"
-            class="icon-btn relative"
-            aria-label="Log in, profile and favourites"
-            @click="comingSoon('Couple accounts & saved favourites')"
-          >
+          <!-- Account: log-in link, or avatar with a menu when signed in -->
+          <NuxtLink v-if="!user" to="/auth/login" class="icon-btn relative" aria-label="Log in or create an account">
             <AppIcon name="user" :size="20" />
             <span
               v-if="favourites.length"
@@ -117,7 +121,55 @@
             >
               {{ favourites.length }}
             </span>
-          </button>
+          </NuxtLink>
+          <div v-else class="relative">
+            <button
+              type="button"
+              class="relative grid h-10 w-10 place-items-center overflow-hidden rounded-full ring-2 transition hover:ring-rosewood"
+              :class="openMenu === 'account' ? 'ring-rosewood' : 'ring-rosewood/25'"
+              :aria-expanded="openMenu === 'account'"
+              aria-haspopup="menu"
+              :aria-label="`Account menu for ${user.name}`"
+              @click="toggle('account')"
+            >
+              <img v-if="user.avatar" :src="user.avatar" alt="" class="h-full w-full object-cover">
+              <span v-else class="grid h-full w-full place-items-center bg-gradient-to-br from-rosewood to-rosewood-800 font-serif text-base font-semibold text-white">{{ userInitials }}</span>
+            </button>
+            <span
+              v-if="favourites.length"
+              :key="favourites.length"
+              class="animate-heart-pop pointer-events-none absolute -right-1 -top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-gold px-1 text-[10px] font-semibold text-white ring-2 ring-ivory"
+            >
+              {{ favourites.length }}
+            </span>
+            <Transition name="menu">
+              <div
+                v-if="openMenu === 'account'"
+                class="absolute right-0 top-[calc(100%+12px)] w-64 overflow-hidden rounded-2xl bg-white shadow-lift ring-1 ring-rosewood/10"
+                role="menu"
+              >
+                <div class="bg-gradient-to-br from-rosewood to-rosewood-800 px-4 py-3.5 text-white">
+                  <p class="truncate font-serif text-lg font-semibold">{{ user.name }}</p>
+                  <p class="truncate text-xs text-white/75">{{ user.email }}</p>
+                </div>
+                <ul class="p-1.5 text-sm">
+                  <li v-for="l in accountLinks" :key="l.label" role="none">
+                    <NuxtLink :to="l.to" role="menuitem" class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-charcoal transition hover:bg-rosewood-50 hover:text-rosewood" @click="closeAll">
+                      <AppIcon :name="l.icon" :size="16" class="text-rosewood" />
+                      {{ l.label }}
+                      <span v-if="l.count" class="ml-auto rounded-full bg-blush-light px-2 text-[11px] text-rosewood-700">{{ l.count }}</span>
+                    </NuxtLink>
+                  </li>
+                  <li role="none" class="mt-1 border-t border-rosewood/10 pt-1">
+                    <button type="button" role="menuitem" class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-charcoal transition hover:bg-rosewood-50 hover:text-rosewood" @click="doLogout">
+                      <AppIcon name="arrowRight" :size="16" class="text-rosewood" />
+                      Log out
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </Transition>
+          </div>
 
           <!-- Hamburger -->
           <button
@@ -253,10 +305,14 @@
             </li>
 
             <li class="grid grid-cols-2 gap-3 pt-5">
-              <button type="button" class="btn-outline" @click="comingSoon('Log in')">
+              <NuxtLink v-if="user" to="/profile" class="btn-outline" @click="closeAll">
+                <AppIcon name="user" :size="16" />
+                My profile
+              </NuxtLink>
+              <NuxtLink v-else to="/auth/login" class="btn-outline" @click="closeAll">
                 <AppIcon name="user" :size="16" />
                 Log in
-              </button>
+              </NuxtLink>
               <button type="button" class="btn-primary" @click="go({ target: 'business' })">
                 <AppIcon name="store" :size="16" />
                 Are you a vendor?
@@ -271,7 +327,7 @@
 
 <script setup>
 import { weddingCategories } from '~/data/weddingCategories'
-import { catalogLink } from '~/composables/useCatalog'
+import { catalogLink, findSubBySlug } from '~/composables/useCatalog'
 
 const scrolled = ref(false)
 const spyLink = ref('Home')
@@ -285,6 +341,29 @@ const route = useRoute()
 const scrollTo = useScrollTo()
 const { comingSoon } = useToast()
 const { favourites } = useFavourites()
+const auth = useAuth()
+const user = auth.user
+const firstName = computed(() => (user.value?.name || '').split(' ')[0])
+const userInitials = computed(() =>
+  (user.value?.name || '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join('')
+)
+const accountLinks = computed(() => [
+  { label: 'My profile', to: '/profile', icon: 'user' },
+  { label: 'Saved vendors', to: '/profile?tab=saved', icon: 'heart', count: favourites.value.length },
+  { label: 'My enquiries', to: '/profile?tab=enquiries', icon: 'mail', count: user.value?.enquiries?.length || 0 },
+  { label: 'Settings', to: '/profile?tab=settings', icon: 'shield' }
+])
+const doLogout = () => {
+  closeAll()
+  auth.logout()
+  useToast().show('You have been logged out. See you soon!', { title: 'Logged out', icon: 'heart' })
+  if (route.path.startsWith('/profile')) navigateTo('/')
+}
 
 const venuesCategory = weddingCategories.find((c) => c.key === 'venues')
 const megaCat = computed(() => weddingCategories.find((c) => c.key === megaKey.value) || weddingCategories[0])
@@ -300,9 +379,13 @@ const menu = [
   { label: 'Contact us', target: 'contact' }
 ]
 
-const onCatalog = computed(() => route.path.startsWith('/catalog'))
+const onCatalog = computed(() => ['/catalog', '/sub-category/', '/listing/'].some((p) => route.path.startsWith(p)))
 const activeLink = computed(() => {
-  if (onCatalog.value) return route.query.category === 'venues' ? 'Wedding Venues' : 'Categories'
+  if (onCatalog.value) {
+    const slug = route.params.slug || route.params.sub
+    const key = slug ? findSubBySlug(String(slug))?.category.key : route.query.category
+    return key === 'venues' ? 'Wedding Venues' : 'Categories'
+  }
   return spyLink.value
 })
 

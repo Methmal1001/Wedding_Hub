@@ -82,24 +82,23 @@
         </span>
       </div>
 
-      <button
-        type="button"
+      <NuxtLink
+        :to="listingLink(item)"
         class="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-rosewood transition hover:gap-2.5 hover:text-rosewood-800"
-        @click="comingSoon(`The ${item.name} profile page`)"
       >
         View profile
         <AppIcon name="arrowRight" :size="15" />
-      </button>
+      </NuxtLink>
     </div>
   </article>
 </template>
 
 <script setup>
 import { categoryName } from '~/composables/useCatalog'
+import { listingLink } from '~/composables/useListing'
 
 const props = defineProps({ item: { type: Object, required: true } })
 const { isFavourite, toggleFavourite } = useFavourites()
-const { comingSoon } = useToast()
 const fav = computed(() => isFavourite(props.item.id))
 const category = computed(() => categoryName(props.item.categoryKey))
 

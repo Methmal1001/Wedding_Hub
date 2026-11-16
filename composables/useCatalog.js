@@ -88,9 +88,34 @@ export function filterCatalog({ q = '', loc = '', category = '', sub = '', sort 
   return sorted
 }
 
-// Builds a link to the catalog with optional filters, e.g. catalogLink({ category: 'photography' })
+// URL slug for a sub-category, matching weddingdirectory.lk
+// e.g. "Settee Backs & Oil Lamps" -> "settee-backs-and-oil-lamps"
+export const subSlug = (name) =>
+  String(name)
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+// Finds { category, sub } for a slug, or null.
+export function findSubBySlug(slug) {
+  for (const category of weddingCategories) {
+    const sub = category.subcategories.find((s) => subSlug(s) === slug)
+    if (sub) return { category, sub }
+  }
+  return null
+}
+
+// Builds a link to the catalog with optional filters, e.g. catalogLink({ category: 'photography' }).
+// A sub-category (without a text search) gets its own page: /sub-category/<slug>.
 export function catalogLink({ q, loc, category, sub, sort } = {}) {
   const query = {}
+  if (sub && !q) {
+    if (loc) query.loc = loc
+    if (sort && sort !== 'recommended') query.sort = sort
+    return { path: `/sub-category/${subSlug(sub)}`, query }
+  }
   if (q) query.q = q
   if (loc) query.loc = loc
   if (category) query.category = category

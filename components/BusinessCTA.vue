@@ -23,10 +23,10 @@
             Showcase your services, connect with couples, and grow your wedding business with Wedding Hub.
           </p>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-            <button type="button" class="btn-gold btn-shine" @click="comingSoon('Business listings')">
+            <NuxtLink :to="{ path: '/auth/register', query: { type: 'vendor' } }" class="btn-gold btn-shine">
               <AppIcon name="store" :size="17" />
               List Your Business
-            </button>
+            </NuxtLink>
             <button type="button" class="btn-ghost-light" @click="comingSoon('Advertising packages')">
               View Advertising Plans
             </button>

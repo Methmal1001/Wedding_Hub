@@ -120,7 +120,8 @@ const menu = [
   { label: 'Wedding Ideas', target: 'inspiration' },
   { label: 'Advertise with us', target: 'business' },
   { label: 'Are you a vendor?', target: 'business' },
-  { label: 'Log in', soon: 'Log in' }
+  { label: 'Log in', to: '/auth/login' },
+  { label: 'Create an account', to: '/auth/register' }
 ]
 
 const quickLinks = weddingCategories.flatMap((c) => c.subcategories.map((sub) => ({ category: c.key, sub })))

@@ -70,7 +70,12 @@
           {{ /^LKR/.test(vendor.priceFrom) ? 'From' : 'Price' }}
           <span class="block text-sm font-semibold text-charcoal">{{ vendor.priceFrom }}</span>
         </p>
+        <NuxtLink v-if="listing" :to="listingLink(listing)" class="btn-outline !min-h-[42px] !px-5 text-[13px]">
+          View Details
+          <AppIcon name="arrowRight" :size="15" class="transition-transform group-hover:translate-x-0.5" />
+        </NuxtLink>
         <button
+          v-else
           type="button"
           class="btn-outline !min-h-[42px] !px-5 text-[13px]"
           @click="comingSoon(`The ${vendor.name} profile page`)"
@@ -84,8 +89,13 @@
 </template>
 
 <script setup>
+import { catalog } from '~/data/catalog'
+import { listingLink } from '~/composables/useListing'
+
 const props = defineProps({ vendor: { type: Object, required: true } })
 const { isFavourite, toggleFavourite } = useFavourites()
 const { comingSoon } = useToast()
 const fav = computed(() => isFavourite(props.vendor.id))
+// The same business in the catalog, so "View Details" can open its listing page.
+const listing = computed(() => catalog.find((l) => l.name === props.vendor.name))
 </script>

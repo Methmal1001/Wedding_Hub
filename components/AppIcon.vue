@@ -63,6 +63,8 @@ const paths = {
     '<rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="m10 9.2 5 2.8-5 2.8V9.2Z" fill="currentColor"/>',
   blog: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>',
   x: '<path d="M4 4h4.5L20 20h-4.5L4 4Z"/><path d="M20 4l-6.6 7.3M10.6 12.7 4 20"/>',
+  image: '<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>',
+  grid: '<rect x="3.5" y="4" width="17" height="6.5" rx="1.8"/><rect x="3.5" y="13.5" width="17" height="6.5" rx="1.8"/><path d="M7 7.25h.01M10 7.25h7M7 16.75h.01M10 16.75h7"/>',
   tiktok:'<path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.5 2.8 2.3 4.5 5 4.8"/>',
   quote:
     '<path d="M9.5 7C6.5 8 5 10.5 5 13.5V17h4.5v-4.5H7.5c0-2 .8-3.3 2.5-4M18.5 7c-3 1-4.5 3.5-4.5 6.5V17h4.5v-4.5h-2c0-2 .8-3.3 2.5-4"/>'
