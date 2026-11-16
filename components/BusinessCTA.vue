@@ -23,13 +23,13 @@
             Showcase your services, connect with couples, and grow your wedding business with Wedding Hub.
           </p>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-            <NuxtLink :to="{ path: '/auth/register', query: { type: 'vendor' } }" class="btn-gold btn-shine">
+            <NuxtLink to="/list-your-business" class="btn-gold btn-shine">
               <AppIcon name="store" :size="17" />
               List Your Business
             </NuxtLink>
-            <button type="button" class="btn-ghost-light" @click="comingSoon('Advertising packages')">
+            <NuxtLink to="/list-your-business#plans" class="btn-ghost-light">
               View Advertising Plans
-            </button>
+            </NuxtLink>
           </div>
         </div>
 
@@ -52,7 +52,6 @@
 </template>
 
 <script setup>
-const { comingSoon } = useToast()
 
 const benefits = [
   { icon: 'users', title: '18,000+ couples', text: 'Reach engaged couples actively planning their wedding.' },

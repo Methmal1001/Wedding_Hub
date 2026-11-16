@@ -91,7 +91,7 @@
     </div>
 
     <NuxtLink
-      to="/#business"
+      to="/list-your-business#advertising"
       class="absolute right-4 top-4 hidden rounded-full bg-white/10 px-3 py-1.5 text-[11px] text-white/80 ring-1 ring-white/20 backdrop-blur transition hover:bg-white hover:text-rosewood-800 sm:block"
     >
       Advertise here

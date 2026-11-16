@@ -5,6 +5,8 @@ const USERS_KEY = 'wh:users'
 const SESSION_KEY = 'wh:session'
 
 export const DEMO_ACCOUNT = { email: 'demo@weddinghub.lk', password: 'Demo@2026' }
+export const ADMIN_ACCOUNT = { email: 'admin@weddinghub.lk', password: 'Admin@2026' }
+export const USER_ROLES = ['couple', 'vendor', 'admin']
 
 // ---- storage helpers (every access can throw in private mode etc.) ---------
 const read = (store, key, fallback) => {
@@ -28,6 +30,7 @@ const local = () => (import.meta.client ? window.localStorage : null)
 const session = () => (import.meta.client ? window.sessionStorage : null)
 
 const loadUsers = () => read(local(), USERS_KEY, [])
+const SEED_USERS_KEY = 'wh:users-seeded-v1'
 const saveUsers = (users) => {
   if (!write(local(), USERS_KEY, users)) throw new Error('Your browser storage is full or blocked, so the account could not be saved.')
 }
@@ -112,7 +115,10 @@ export const useAuth = () => {
   const init = () => {
     const s = read(session(), SESSION_KEY, null) || read(local(), SESSION_KEY, null)
     const u = s && loadUsers().find((x) => x.id === s.userId)
-    if (u) {
+    if (u && u.status === 'suspended') {
+      write(local(), SESSION_KEY, null)
+      write(session(), SESSION_KEY, null)
+    } else if (u) {
       user.value = toPublic(u)
       favourites.value = [...new Set([...(u.favourites || []), ...favourites.value])]
     }
@@ -150,9 +156,15 @@ export const useAuth = () => {
   }
 
   const login = async (email, password, remember = true) => {
+    // The demo accounts are created the first time someone logs in with them.
+    if (normaliseEmail(email) === DEMO_ACCOUNT.email) await ensureDemoAccount()
+    if (normaliseEmail(email) === ADMIN_ACCOUNT.email) await ensureAdminAccount()
     const u = loadUsers().find((x) => x.email === normaliseEmail(email))
     if (!u || (await hashPassword(password, u.salt)) !== u.passwordHash) {
       throw new Error('That e-mail and password don’t match. Please try again.')
+    }
+    if (u.status === 'suspended') {
+      throw new Error('This account has been suspended. Please contact hello@weddinghub.lk for help.')
     }
     startSession(u, remember)
     return user.value
@@ -187,6 +199,70 @@ export const useAuth = () => {
         passwordHash: await hashPassword(DEMO_ACCOUNT.password, salt)
       }
     ])
+  }
+
+  const ensureAdminAccount = async () => {
+    if (loadUsers().some((u) => u.email === ADMIN_ACCOUNT.email)) return
+    const salt = randomId()
+    saveUsers([
+      ...loadUsers(),
+      {
+        id: `u_${randomId(8)}`,
+        role: 'admin',
+        name: 'Admin Team',
+        email: ADMIN_ACCOUNT.email,
+        phone: '+94 11 000 0100',
+        city: 'Colombo',
+        partnerName: '',
+        weddingDate: '',
+        businessName: '',
+        businessCategory: '',
+        bio: 'Wedding Hub moderation team.',
+        avatar: '',
+        favourites: [],
+        enquiries: [],
+        checklist: [],
+        createdAt: new Date().toISOString(),
+        salt,
+        passwordHash: await hashPassword(ADMIN_ACCOUNT.password, salt)
+      }
+    ])
+  }
+
+  // A few sample members so the admin's user list isn't empty. They can't log
+  // in (no password is set).
+  const ensureSampleUsers = () => {
+    if (!import.meta.client || read(local(), SEED_USERS_KEY, null)) return
+    const ago = (d) => new Date(Date.now() - d * 864e5).toISOString()
+    const base = { city: 'Colombo', partnerName: '', weddingDate: '', businessName: '', businessCategory: '', bio: '', avatar: '', favourites: [], enquiries: [], checklist: [], salt: '', passwordHash: 'no-login' }
+    const sample = [
+      { name: 'Hiruni Wickramasinghe', email: 'hiruni@example.com', role: 'couple', partnerName: 'Malith', city: 'Galle', phone: '+94 77 000 0141', createdAt: ago(3), lastLoginAt: ago(0.2), favourites: ['c8', 'c11'] },
+      { name: 'Ashan Gunawardena', email: 'ashan@example.com', role: 'couple', partnerName: 'Dilini', city: 'Negombo', phone: '+94 71 000 0142', createdAt: ago(9), lastLoginAt: ago(1) },
+      { name: 'Tharushi Kumari', email: 'tharushi@example.com', role: 'couple', partnerName: 'Nuwan', city: 'Kandy', phone: '+94 76 000 0143', createdAt: ago(18), lastLoginAt: ago(6) },
+      { name: 'Ishara Rathnayake', email: 'rubybridal@example.com', role: 'vendor', businessName: 'Ruby Bridal Studio', businessCategory: 'beauty', city: 'Kurunegala', phone: '+94 77 000 0105', createdAt: ago(7), lastLoginAt: ago(4) },
+      { name: 'Nethmi Wijesinghe', email: 'lotuspetal@example.com', role: 'vendor', businessName: 'Lotus Petal Décor', businessCategory: 'decoration', city: 'Kandy', phone: '+94 77 000 0101', createdAt: ago(1), lastLoginAt: ago(0.4) },
+      { name: 'Win Big Promotions', email: 'spam@example.com', role: 'couple', city: 'Colombo', phone: '+94 70 000 0144', createdAt: ago(5), status: 'suspended', suspendedReason: 'Posted spam reviews.' }
+    ]
+    const users = loadUsers()
+    const add = sample.filter((s) => !users.some((u) => u.email === s.email)).map((s) => ({ ...base, id: `u_${randomId(8)}`, ...s }))
+    if (write(local(), USERS_KEY, [...users, ...add])) write(local(), SEED_USERS_KEY, true)
+  }
+
+  // ---- admin: manage members ----
+  const listUsers = () => loadUsers().map(toPublic)
+  const adminUpdateUser = (id, patch) => {
+    const users = loadUsers()
+    const i = users.findIndex((u) => u.id === id)
+    if (i === -1) return
+    const allowed = ['role', 'status', 'suspendedReason', 'name', 'phone', 'city', 'businessName', 'businessCategory']
+    const clean = Object.fromEntries(Object.entries(patch).filter(([k]) => allowed.includes(k)))
+    users[i] = { ...users[i], ...clean, updatedAt: new Date().toISOString() }
+    saveUsers(users)
+    if (user.value?.id === id) user.value = toPublic(users[i])
+  }
+  const adminDeleteUser = (id) => {
+    if (id === user.value?.id) return
+    saveUsers(loadUsers().filter((u) => u.id !== id))
   }
 
   const logout = () => {
@@ -239,11 +315,17 @@ export const useAuth = () => {
     user,
     ready,
     isLoggedIn: computed(() => !!user.value),
+    isAdmin: computed(() => user.value?.role === 'admin'),
     init,
     register,
     login,
     logout,
     ensureDemoAccount,
+    ensureAdminAccount,
+    ensureSampleUsers,
+    listUsers,
+    adminUpdateUser,
+    adminDeleteUser,
     updateProfile,
     changePassword,
     deleteAccount,

@@ -109,6 +109,41 @@
         <Transition name="tab" mode="out-in">
           <!-- ===== Overview ===== -->
           <div v-if="tab === 'overview'" key="overview" class="space-y-8">
+            <!-- Admin shortcut -->
+            <NuxtLink
+              v-if="user.role === 'admin'"
+              to="/admin"
+              class="flex flex-wrap items-center gap-4 rounded-3xl bg-gradient-to-r from-rosewood-900 to-rosewood-700 p-5 text-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift"
+            >
+              <span class="grid h-12 w-12 place-items-center rounded-2xl bg-gold-light text-rosewood-900"><AppIcon name="dashboard" :size="22" /></span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-serif text-2xl font-semibold">Admin panel</span>
+                <span class="block text-sm text-white/75">{{ pendingCount }} listing request{{ pendingCount === 1 ? '' : 's' }} waiting for approval</span>
+              </span>
+              <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-light">Open <AppIcon name="arrowRight" :size="16" /></span>
+            </NuxtLink>
+
+            <!-- Notifications from the Wedding Hub team -->
+            <article v-if="notes.length" class="panel">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 class="panel-title flex items-center gap-2">
+                  Notifications
+                  <span v-if="unread" class="rounded-full bg-rosewood px-2 py-0.5 font-sans text-xs font-semibold text-white">{{ unread }} new</span>
+                </h2>
+                <button v-if="unread" type="button" class="text-sm font-semibold text-rosewood hover:underline" @click="site.markNotificationsRead(user.email)">Mark all as read</button>
+              </div>
+              <ul class="mt-4 space-y-2.5">
+                <li v-for="n in notes.slice(0, 5)" :key="n.id" class="flex gap-3 rounded-2xl p-4 ring-1" :class="noteCls(n)">
+                  <span class="mt-1 h-2 w-2 shrink-0 rounded-full" :class="n.read ? 'bg-charcoal/15' : 'bg-rosewood'" />
+                  <div class="min-w-0 flex-1 text-sm">
+                    <p class="font-semibold text-charcoal">{{ n.title }}</p>
+                    <p class="mt-0.5 text-charcoal-soft">{{ n.message }}</p>
+                    <p class="mt-1 text-xs text-charcoal-soft">{{ formatDate(n.at) }}</p>
+                  </div>
+                  <NuxtLink v-if="n.link" :to="n.link" class="self-center whitespace-nowrap text-sm font-semibold text-rosewood hover:underline">View →</NuxtLink>
+                </li>
+              </ul>
+            </article>
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div v-for="(s, i) in stats" :key="s.label" class="stat" :style="{ animationDelay: i * 0.08 + 's' }">
                 <span class="grid h-12 w-12 place-items-center rounded-2xl" :class="s.tone">
@@ -143,16 +178,32 @@
                   </li>
                 </ul>
               </article>
-              <article v-else class="panel">
+              <article v-else-if="user.role !== 'admin'" class="panel">
                 <p class="eyebrow">Your business</p>
                 <h2 class="panel-title mt-2">{{ user.businessName || 'Your listing' }}</h2>
                 <p class="mt-2 text-sm text-charcoal-soft">{{ categoryName(user.businessCategory) || 'Category not set' }}<template v-if="user.city"> · {{ user.city }}</template></p>
-                <div class="mt-5 flex items-start gap-3 rounded-2xl bg-gold-light/25 p-4 ring-1 ring-gold/30">
+                <!-- Listing requests and their review status -->
+                <ul v-if="mySubs.length" class="mt-5 space-y-3">
+                  <li v-for="sb in mySubs" :key="sb.ref" class="rounded-2xl p-4 ring-1" :class="statusInfo(sb).box">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                      <p class="text-sm font-semibold text-charcoal">{{ sb.businessName }} <span class="font-normal text-charcoal-soft">· {{ sb.ref }}</span></p>
+                      <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="statusInfo(sb).pill">{{ statusInfo(sb).label }}</span>
+                    </div>
+                    <p class="mt-1 text-xs text-charcoal-soft">Submitted {{ formatDate(sb.submittedAt) }} · {{ sb.plan }} plan</p>
+                    <p v-if="sb.decisionNote && sb.status !== 'approved'" class="mt-2 text-sm text-charcoal">“{{ sb.decisionNote }}”</p>
+                    <p v-else-if="sb.status === 'pending'" class="mt-2 text-sm text-charcoal-soft">Our team is reviewing it – usually within 1–2 working days.</p>
+                    <div v-if="sb.status === 'approved' || sb.status === 'changes' || sb.status === 'rejected'" class="mt-3 flex flex-wrap gap-2">
+                      <NuxtLink v-if="sb.status === 'approved'" :to="listingPath(submissionToListing(sb))" class="btn-primary !min-h-[38px] !px-4 text-xs">View live listing</NuxtLink>
+                      <NuxtLink v-else :to="`/list-your-business?edit=${sb.ref}#apply`" class="btn-primary !min-h-[38px] !px-4 text-xs">Update &amp; resubmit</NuxtLink>
+                    </div>
+                  </li>
+                </ul>
+                <div v-else class="mt-5 flex items-start gap-3 rounded-2xl bg-gold-light/25 p-4 ring-1 ring-gold/30">
                   <AppIcon name="sparkles" :size="18" class="mt-0.5 shrink-0 text-gold-dark" />
-                  <p class="text-sm text-charcoal">Your listing is <strong>pending review</strong>. Add photos, services and prices so couples can find you.</p>
+                  <p class="text-sm text-charcoal">You haven’t submitted your listing yet. Add photos, services and prices so couples can find you.</p>
                 </div>
                 <div class="mt-5 flex flex-wrap gap-3">
-                  <button type="button" class="btn-primary !min-h-[44px] text-sm" @click="comingSoon('The vendor listing editor')">Complete your listing</button>
+                  <NuxtLink to="/list-your-business#apply" class="btn-primary !min-h-[44px] text-sm">{{ mySubs.length ? 'Submit another listing' : 'Complete your listing' }}</NuxtLink>
                   <NuxtLink :to="catalogLink({ category: user.businessCategory })" class="btn-outline !min-h-[44px] text-sm">See your category</NuxtLink>
                 </div>
               </article>
@@ -343,6 +394,22 @@ const route = useRoute()
 const router = useRouter()
 const { show, comingSoon } = useToast()
 const { favourites } = useFavourites()
+const site = useSiteData()
+
+// ---- listing requests & notifications (managed in the admin panel) ----------------
+const mySubs = computed(() => site.submissionsFor(user.value))
+const notes = computed(() => site.notificationsFor(user.value?.email))
+const unread = computed(() => notes.value.filter((n) => !n.read).length)
+const pendingCount = computed(() => siteDb.submissions.filter((x) => x.status === 'pending').length)
+const STATUS_INFO = {
+  pending: { label: 'Pending review', short: 'Pending', box: 'bg-amber-50/60 ring-amber-200', pill: 'bg-amber-100 text-amber-800' },
+  changes: { label: 'Changes requested', short: 'Changes', box: 'bg-sky-50/70 ring-sky-200', pill: 'bg-sky-100 text-sky-800' },
+  approved: { label: 'Live', short: 'Live', box: 'bg-emerald-50/60 ring-emerald-200', pill: 'bg-emerald-100 text-emerald-800' },
+  rejected: { label: 'Not approved', short: 'Rejected', box: 'bg-red-50/60 ring-red-200', pill: 'bg-red-100 text-red-700' },
+  unpublished: { label: 'Unpublished', short: 'Offline', box: 'bg-charcoal/[0.03] ring-charcoal/10', pill: 'bg-charcoal/10 text-charcoal-soft' }
+}
+const statusInfo = (sb) => STATUS_INFO[sb.status] || STATUS_INFO.pending
+const noteCls = (n) => ({ success: 'ring-emerald-200 bg-emerald-50/50', warn: 'ring-sky-200 bg-sky-50/50', danger: 'ring-red-200 bg-red-50/50' })[n.tone] || 'ring-rosewood/10'
 
 // ---- tabs (kept in the URL: /profile?tab=saved) ----------------------------------
 const tab = computed(() => {
@@ -435,7 +502,7 @@ const stats = computed(() => [
   { label: 'Enquiries sent', value: user.value?.enquiries?.length || 0, icon: 'mail', tone: 'bg-gold-light/40 text-gold-dark' },
   user.value?.role === 'couple'
     ? { label: countdown.value?.past ? 'Days married' : 'Days to go', value: countdown.value ? countdown.value.days : '—', icon: 'calendar', tone: 'bg-blush text-rosewood-800' }
-    : { label: 'Listing status', value: 'Pending', icon: 'store', tone: 'bg-blush text-rosewood-800' },
+    : { label: 'Listing status', value: mySubs.value[0] ? statusInfo(mySubs.value[0]).short : 'Not listed', icon: 'store', tone: 'bg-blush text-rosewood-800' },
   { label: 'Profile strength', value: `${completeness.value}%`, icon: 'sparkles', tone: 'bg-emerald-50 text-emerald-600' }
 ])
 

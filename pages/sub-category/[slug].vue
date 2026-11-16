@@ -130,7 +130,7 @@
                 </p>
                 <div class="mt-6 flex flex-wrap justify-center gap-3">
                   <button v-if="filters.q || filters.loc" type="button" class="btn-primary" @click="clearFilters">Clear filters</button>
-                  <button type="button" class="btn-outline" @click="scrollTo('business')">List your business here</button>
+                  <NuxtLink to="/list-your-business" class="btn-outline">List your business here</NuxtLink>
                 </div>
               </div>
 
@@ -204,7 +204,7 @@
 
 <script setup>
 import { locations } from '~/data/locations'
-import { catalog } from '~/data/catalog'
+import { liveCatalog } from '~/composables/useSiteData'
 import { filterCatalog, sortOptions, catalogLink, findSubBySlug } from '~/composables/useCatalog'
 import { subSlides, categoryTagline, relatedSubTiles } from '~/composables/useCategoryPage'
 
@@ -241,7 +241,7 @@ const filters = computed(() => ({
 const view = computed(() => (route.query.view === 'image' ? 'image' : 'grid'))
 const setView = (v) => update({ view: v, page: filters.value.page })
 
-const all = computed(() => catalog.filter((l) => l.categoryKey === category.value.key && l.sub === sub.value))
+const all = computed(() => liveCatalog().filter((l) => l.categoryKey === category.value.key && l.sub === sub.value))
 const results = computed(() =>
   filterCatalog({ q: filters.value.q, loc: filters.value.loc, category: category.value.key, sub: sub.value, sort: filters.value.sort })
 )
@@ -254,7 +254,7 @@ const rangeStart = computed(() => (results.value.length ? (page.value - 1) * PAG
 const rangeEnd = computed(() => Math.min(page.value * PAGE_SIZE, results.value.length))
 
 const alsoInCategory = computed(() =>
-  catalog.filter((l) => l.categoryKey === category.value.key && l.sub !== sub.value).slice(0, 6)
+  liveCatalog().filter((l) => l.categoryKey === category.value.key && l.sub !== sub.value).slice(0, 6)
 )
 const related = computed(() => relatedSubTiles(category.value.key, sub.value))
 

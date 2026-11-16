@@ -1,4 +1,4 @@
-import { catalog } from '~/data/catalog'
+import { liveCatalog } from '~/composables/useSiteData'
 import { vendors } from '~/data/vendors'
 import { categoryBanners } from '~/data/categoryBanners'
 import { weddingCategories } from '~/data/weddingCategories'
@@ -11,7 +11,7 @@ const unique = (list) => [...new Set(list.filter(Boolean))]
 // All photos that belong to a category: its own image, then its listings' galleries.
 export const categoryPhotos = (key) => {
   const cat = weddingCategories.find((c) => c.key === key)
-  return unique([cat?.image, ...catalog.filter((l) => l.categoryKey === key).flatMap((l) => l.gallery)])
+  return unique([cat?.image, ...liveCatalog().filter((l) => l.categoryKey === key).flatMap((l) => l.gallery)])
 }
 
 // Rotating top-banner slides for a category page.
@@ -29,7 +29,7 @@ export const subcategoryTiles = (key) => {
   const cat = weddingCategories.find((c) => c.key === key)
   if (!cat) return []
   const tiles = cat.subcategories.map((name) => {
-    const listings = catalog.filter((l) => l.categoryKey === key && l.sub === name)
+    const listings = liveCatalog().filter((l) => l.categoryKey === key && l.sub === name)
     return { name, count: listings.length, image: listings[0]?.gallery[0] || '' }
   })
   const used = new Set(tiles.map((t) => t.image).filter(Boolean))
@@ -51,7 +51,7 @@ export const sponsoredBanners = (key) => {
 // Rotating top-banner slides for a sub-category page: that service's own
 // listing photos first, then the parent category's photos.
 export const subSlides = (key, sub) => {
-  const own = catalog.filter((l) => l.categoryKey === key && l.sub === sub).flatMap((l) => l.gallery)
+  const own = liveCatalog().filter((l) => l.categoryKey === key && l.sub === sub).flatMap((l) => l.gallery)
   const photos = unique([...own, ...categoryPhotos(key), ...FALLBACK])
   const headlines = [
     `Trusted ${sub} across Sri Lanka`,

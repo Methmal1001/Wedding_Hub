@@ -194,7 +194,7 @@ const promos = [
     text: 'Put your business in front of thousands of couples planning their big day.',
     cta: 'List your business',
     image: '/images/business-cta.jpg',
-    action: () => scrollTo('business')
+    action: () => navigateTo('/list-your-business#advertising')
   },
   {
     icon: 'rings',

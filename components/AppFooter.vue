@@ -68,7 +68,7 @@
               <span>Mon – Sat, 9.00 am – 6.00 pm</span>
             </li>
           </ul>
-          <button type="button" class="btn-gold mt-6 !min-h-[44px] !px-6 text-[13px]" @click="follow({ target: 'business' })">
+          <button type="button" class="btn-gold mt-6 !min-h-[44px] !px-6 text-[13px]" @click="follow({ to: '/list-your-business#apply' })">
             <AppIcon name="store" :size="16" />
             Add Your Listing
           </button>
@@ -118,8 +118,8 @@ const menu = [
   { label: 'Vendor Catalog', to: '/catalog' },
   { label: 'Blog', soon: 'The Wedding Hub blog' },
   { label: 'Wedding Ideas', target: 'inspiration' },
-  { label: 'Advertise with us', target: 'business' },
-  { label: 'Are you a vendor?', target: 'business' },
+  { label: 'Advertise with us', to: '/list-your-business#advertising' },
+  { label: 'List your business', to: '/list-your-business' },
   { label: 'Log in', to: '/auth/login' },
   { label: 'Create an account', to: '/auth/register' }
 ]

@@ -1,4 +1,4 @@
-import { catalog } from '~/data/catalog'
+import { liveCatalog } from '~/composables/useSiteData'
 import { weddingCategories } from '~/data/weddingCategories'
 
 // Friendly search synonyms so everyday words match category names.
@@ -68,7 +68,7 @@ const byPrice = (dir) => (a, b) => {
 export function filterCatalog({ q = '', loc = '', category = '', sub = '', sort = 'recommended' } = {}) {
   const terms = normalise(q).split(/\s+/).filter((t) => t.length > 1)
 
-  const list = catalog.filter((item) => {
+  const list = liveCatalog().filter((item) => {
     const hay = haystack(item)
     const textOk = terms.every((t) => {
       if (hay.includes(t)) return true
@@ -81,7 +81,8 @@ export function filterCatalog({ q = '', loc = '', category = '', sub = '', sort 
     return textOk && locOk && catOk && subOk
   })
 
-  const sorted = [...list]
+  // Featured listings (set in the admin panel) come first.
+  const sorted = [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
   if (sort === 'rating') sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0))
   else if (sort === 'price-asc') sorted.sort(byPrice(1))
   else if (sort === 'price-desc') sorted.sort(byPrice(-1))
@@ -91,7 +92,7 @@ export function filterCatalog({ q = '', loc = '', category = '', sub = '', sort 
 // URL slug for a sub-category, matching weddingdirectory.lk
 // e.g. "Settee Backs & Oil Lamps" -> "settee-backs-and-oil-lamps"
 export const subSlug = (name) =>
-  String(name)
+  String(name).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/&/g, ' and ')
     .replace(/[’']/g, '')

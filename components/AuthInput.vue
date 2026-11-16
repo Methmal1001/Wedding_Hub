@@ -8,26 +8,31 @@
         class="pointer-events-none absolute left-4 z-10 transition-colors duration-300"
         :class="[as === 'textarea' ? 'top-[18px]' : 'top-1/2 -translate-y-1/2', error ? 'text-red-500' : focused ? 'text-rosewood' : 'text-charcoal-soft/70']"
       />
-      <component
-        :is="as"
-        :id="id"
-        :value="modelValue"
-        :type="as === 'input' ? currentType : undefined"
-        :autocomplete="autocomplete"
-        :min="min"
-        :disabled="disabled"
-        placeholder=" "
-        class="peer field-control"
-        :class="[error ? 'is-bad' : '', type === 'password' ? 'pr-12' : 'pr-4', as === 'select' ? 'cursor-pointer appearance-none' : '', as === 'textarea' ? '!h-28 resize-none !pt-7' : '']"
-        :aria-invalid="!!error"
-        :aria-describedby="error ? `${id}-err` : undefined"
-        @input="$emit('update:modelValue', $event.target.value)"
-        @change="$emit('update:modelValue', $event.target.value)"
-        @focus="focused = true"
-        @blur="focused = false"
+      <!-- Separate elements (not <component :is>) so void <input>s never get slot children – keeps SSR hydration clean -->
+      <select
+        v-if="as === 'select'"
+        v-bind="controlAttrs"
+        class="peer field-control cursor-pointer appearance-none pr-4"
+        :class="{ 'is-bad': error }"
+        v-on="controlEvents"
       >
         <slot />
-      </component>
+      </select>
+      <textarea
+        v-else-if="as === 'textarea'"
+        v-bind="controlAttrs"
+        class="peer field-control !h-28 resize-none !pt-7 pr-4"
+        :class="{ 'is-bad': error }"
+        v-on="controlEvents"
+      />
+      <input
+        v-else
+        v-bind="controlAttrs"
+        :type="currentType"
+        class="peer field-control"
+        :class="[error ? 'is-bad' : '', type === 'password' ? 'pr-12' : 'pr-4']"
+        v-on="controlEvents"
+      >
       <label
         :for="id"
         class="field-label"
@@ -81,12 +86,30 @@ const props = defineProps({
   forceUp: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false }
 })
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
 
 const id = useId()
 const focused = ref(false)
 const show = ref(false)
 const currentType = computed(() => (props.type === 'password' && show.value ? 'text' : props.type))
+
+const controlAttrs = computed(() => ({
+  id,
+  value: props.modelValue,
+  autocomplete: props.autocomplete,
+  min: props.min,
+  disabled: props.disabled,
+  placeholder: ' ',
+  'aria-invalid': !!props.error,
+  'aria-describedby': props.error ? `${id}-err` : undefined
+}))
+const emitValue = (e) => emit('update:modelValue', e.target.value)
+const controlEvents = {
+  input: emitValue,
+  change: emitValue,
+  focus: () => (focused.value = true),
+  blur: () => (focused.value = false)
+}
 </script>
 
 <style scoped>

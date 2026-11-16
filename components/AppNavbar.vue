@@ -31,7 +31,7 @@
             <NuxtLink to="/auth/register" class="topbar-link">Sign up</NuxtLink>
           </template>
           <span class="h-3 w-px bg-white/30" />
-          <button type="button" class="topbar-link" @click="go({ target: 'business' })">
+          <button type="button" class="topbar-link" @click="go({ to: '/list-your-business' })">
             <AppIcon name="store" :size="14" />
             Are you a vendor?
           </button>
@@ -106,7 +106,7 @@
             <AppIcon name="search" :size="20" />
           </button>
 
-          <button type="button" class="btn-primary btn-shine hidden !min-h-[42px] whitespace-nowrap !px-5 lg:inline-flex" @click="go({ target: 'business' })">
+          <button type="button" class="btn-primary btn-shine hidden !min-h-[42px] whitespace-nowrap !px-5 lg:inline-flex" @click="go({ to: '/list-your-business' })">
             <AppIcon name="store" :size="17" />
             List Your Business
           </button>
@@ -313,7 +313,7 @@
                 <AppIcon name="user" :size="16" />
                 Log in
               </NuxtLink>
-              <button type="button" class="btn-primary" @click="go({ target: 'business' })">
+              <button type="button" class="btn-primary" @click="go({ to: '/list-your-business' })">
                 <AppIcon name="store" :size="16" />
                 Are you a vendor?
               </button>
@@ -353,6 +353,7 @@ const userInitials = computed(() =>
     .join('')
 )
 const accountLinks = computed(() => [
+  ...(user.value?.role === 'admin' ? [{ label: 'Admin panel', to: '/admin', icon: 'dashboard' }] : []),
   { label: 'My profile', to: '/profile', icon: 'user' },
   { label: 'Saved vendors', to: '/profile?tab=saved', icon: 'heart', count: favourites.value.length },
   { label: 'My enquiries', to: '/profile?tab=enquiries', icon: 'mail', count: user.value?.enquiries?.length || 0 },
@@ -375,12 +376,13 @@ const menu = [
   { label: 'Categories', dropdown: 'categories' },
   { label: 'Wedding Venues', dropdown: 'venues' },
   { label: 'Blog', soon: 'The Wedding Hub blog' },
-  { label: 'Advertise with us', target: 'business' },
+  { label: 'Advertise with us', to: '/list-your-business#advertising' },
   { label: 'Contact us', target: 'contact' }
 ]
 
 const onCatalog = computed(() => ['/catalog', '/sub-category/', '/listing/'].some((p) => route.path.startsWith(p)))
 const activeLink = computed(() => {
+  if (route.path.startsWith('/list-your-business')) return 'Advertise with us'
   if (onCatalog.value) {
     const slug = route.params.slug || route.params.sub
     const key = slug ? findSubBySlug(String(slug))?.category.key : route.query.category

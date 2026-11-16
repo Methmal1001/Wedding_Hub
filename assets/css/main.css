@@ -282,3 +282,80 @@
 section[id] {
   scroll-margin-top: 80px;
 }
+
+/* ------------------------------------------------------------------
+   Admin panel (pages/admin/*)
+------------------------------------------------------------------- */
+@layer components {
+  .adm-card {
+    @apply rounded-2xl bg-white ring-1 ring-charcoal/[0.07];
+    box-shadow: 0 1px 2px rgba(51, 39, 44, 0.04), 0 8px 24px -16px rgba(110, 52, 70, 0.18);
+  }
+  .adm-card-title {
+    @apply font-serif text-xl font-semibold text-charcoal;
+  }
+  .adm-btn {
+    @apply inline-flex min-h-[38px] items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 text-[13px] font-medium transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosewood/40 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .adm-btn-primary {
+    @apply adm-btn bg-rosewood text-white hover:bg-rosewood-700;
+  }
+  .adm-btn-success {
+    @apply adm-btn bg-emerald-600 text-white hover:bg-emerald-700;
+  }
+  .adm-btn-danger {
+    @apply adm-btn bg-red-600 text-white hover:bg-red-700;
+  }
+  .adm-btn-soft {
+    @apply adm-btn bg-rosewood-50 text-rosewood-700 hover:bg-rosewood-100;
+  }
+  .adm-btn-ghost {
+    @apply adm-btn bg-white text-charcoal ring-1 ring-charcoal/10 hover:bg-ivory hover:ring-charcoal/20;
+  }
+  .adm-icon-btn {
+    @apply grid h-9 w-9 shrink-0 place-items-center rounded-xl text-charcoal-soft transition hover:bg-rosewood-50 hover:text-rosewood focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosewood/40;
+  }
+  .adm-input {
+    @apply h-10 w-full rounded-xl border border-charcoal/10 bg-white px-3 text-sm text-charcoal outline-none transition placeholder:text-charcoal-soft/60 focus:border-rosewood/50 focus:ring-4 focus:ring-rosewood/10;
+  }
+  textarea.adm-input {
+    @apply h-auto py-2.5;
+  }
+  .adm-label {
+    @apply mb-1.5 block text-xs font-medium text-charcoal-soft;
+  }
+  .adm-table {
+    @apply w-full border-separate border-spacing-0 text-left text-sm;
+  }
+  .adm-table th {
+    @apply sticky top-0 z-[1] whitespace-nowrap border-b border-charcoal/10 bg-ivory px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-charcoal-soft;
+  }
+  .adm-table td {
+    @apply border-b border-charcoal/[0.06] px-4 py-3 align-middle text-charcoal;
+  }
+  .adm-table tbody tr {
+    @apply transition-colors hover:bg-rosewood-50/50;
+  }
+  .adm-tab {
+    @apply inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-[13px] font-medium text-charcoal-soft transition hover:bg-white hover:text-charcoal;
+  }
+  .adm-tab.is-on {
+    @apply bg-white text-rosewood shadow-sm ring-1 ring-charcoal/[0.07];
+  }
+  .adm-count {
+    @apply rounded-full bg-charcoal/[0.06] px-1.5 py-px text-[11px] font-semibold text-charcoal-soft;
+  }
+  .adm-tab.is-on .adm-count {
+    @apply bg-rosewood-50 text-rosewood;
+  }
+}
+
+.adm-rise {
+  animation: adm-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes adm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}

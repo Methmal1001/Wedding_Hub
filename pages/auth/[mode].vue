@@ -78,10 +78,16 @@
                   <span class="h-px flex-1 bg-rosewood/15" />
                 </div>
 
-                <button type="button" class="demo-btn" :disabled="busy" @click="useDemo">
-                  <AppIcon name="sparkles" :size="17" class="text-gold-dark" />
-                  Try the demo account
-                </button>
+                <div class="grid gap-2.5 sm:grid-cols-2">
+                  <button type="button" class="demo-btn" :disabled="busy" @click="useDemo">
+                    <AppIcon name="sparkles" :size="17" class="text-gold-dark" />
+                    Try the demo account
+                  </button>
+                  <button type="button" class="demo-btn" :disabled="busy" @click="useAdminDemo">
+                    <AppIcon name="shield" :size="17" class="text-rosewood" />
+                    Admin demo
+                  </button>
+                </div>
 
                 <p class="mt-7 text-center text-sm text-charcoal-soft">
                   New to Wedding Hub?
@@ -255,7 +261,7 @@
 <script setup>
 import { locations } from '~/data/locations'
 import { weddingCategories } from '~/data/weddingCategories'
-import { passwordStrength, normaliseEmail, DEMO_ACCOUNT } from '~/composables/useAuth'
+import { passwordStrength, normaliseEmail, DEMO_ACCOUNT, ADMIN_ACCOUNT } from '~/composables/useAuth'
 
 // Keep one page instance for /auth/login and /auth/register so the showcase
 // keeps animating and the forms slide between each other.
@@ -280,7 +286,9 @@ const modeTabs = [
 const carryQuery = computed(() => (route.query.redirect ? { redirect: route.query.redirect } : {}))
 const redirectTo = computed(() => {
   const r = String(route.query.redirect || '')
-  return r.startsWith('/') && !r.startsWith('//') && !r.startsWith('/auth') ? r : '/profile'
+  if (r.startsWith('/') && !r.startsWith('//') && !r.startsWith('/auth')) return r
+  // Admins land on the admin dashboard
+  return auth.user.value?.role === 'admin' ? '/admin' : '/profile'
 })
 
 // Already signed in? Go straight to the profile.
@@ -329,13 +337,18 @@ const doLogin = async () => {
   try {
     await wait(650) // brief pause so the button state reads naturally
     const u = await auth.login(loginForm.email, loginForm.password, loginForm.remember)
-    await celebrate(`Welcome back, ${u.name.split(' ')[0]}!`, 'Taking you to your profile…')
+    await celebrate(`Welcome back, ${u.name.split(' ')[0]}!`, u.role === 'admin' ? 'Opening the admin panel…' : 'Taking you to your profile…')
   } catch (e) {
     formError.value = e.message
     shake()
   } finally {
     busy.value = false
   }
+}
+const useAdminDemo = async () => {
+  loginForm.email = ADMIN_ACCOUNT.email
+  loginForm.password = ADMIN_ACCOUNT.password
+  doLogin()
 }
 const useDemo = async () => {
   await auth.ensureDemoAccount()
