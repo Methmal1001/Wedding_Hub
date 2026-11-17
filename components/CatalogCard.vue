@@ -1,5 +1,65 @@
 <template>
   <article
+    v-if="compact"
+    class="group relative flex h-full flex-col items-center rounded-2xl bg-white p-4 text-center shadow-soft ring-1 ring-rosewood/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lift sm:p-5"
+  >
+    <button
+      type="button"
+      class="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-rosewood-50 text-rosewood transition hover:scale-110 hover:bg-rosewood hover:text-white"
+      :aria-pressed="fav"
+      :aria-label="fav ? `Remove ${item.name} from favourites` : `Save ${item.name} to favourites`"
+      @click="toggleFavourite(item)"
+    >
+      <AppIcon :key="String(fav)" name="heart" :size="17" :filled="fav" :class="{ 'animate-heart-pop': fav }" />
+    </button>
+
+    <NuxtLink :to="listingLink(item)" class="flex h-full w-full flex-col items-center rounded-xl focus-visible:outline-none">
+      <span class="relative grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-full bg-rosewood-50 ring-4 ring-white shadow-soft sm:h-24 sm:w-24">
+        <img
+          v-if="logoImage"
+          :src="logoImage"
+          :alt="`${item.name} logo`"
+          loading="lazy"
+          class="h-full w-full object-cover"
+        >
+        <span
+          v-else
+          class="font-serif text-2xl font-semibold tracking-wide text-rosewood"
+          aria-hidden="true"
+        >
+          {{ initials }}
+        </span>
+        <span
+          v-if="item.verified"
+          class="absolute -bottom-0.5 -right-0.5 grid h-6 w-6 place-items-center rounded-full bg-white text-emerald-600 shadow ring-1 ring-emerald-100"
+          title="Verified by Wedding Hub"
+          aria-label="Verified listing"
+        >
+          <AppIcon name="verified" :size="15" />
+        </span>
+      </span>
+      <h3 class="mt-3 min-h-10 w-full font-serif text-base font-semibold leading-snug text-charcoal transition-colors group-hover:text-rosewood sm:mt-4 sm:min-h-12 sm:text-lg">
+        {{ item.name }}
+      </h3>
+      <p
+        v-if="item.rating"
+        class="mt-2 flex items-center justify-center gap-1 text-xs text-charcoal-soft"
+        :aria-label="`Rated ${item.rating.toFixed(1)} out of 5${item.reviews ? `, ${item.reviews} reviews` : ''}`"
+      >
+        <AppIcon name="star" :size="14" filled class="text-gold" />
+        <span class="font-semibold text-charcoal">{{ item.rating.toFixed(1) }}</span>
+        <span v-if="item.reviews">({{ item.reviews }})</span>
+      </p>
+      <p v-else class="mt-2 text-xs text-charcoal-soft">No ratings yet</p>
+      <p class="mt-2 flex items-center justify-center gap-1.5 text-xs leading-snug text-charcoal-soft sm:text-sm">
+        <AppIcon name="pin" :size="14" class="shrink-0 text-rosewood" />
+        <span>{{ item.area || item.location }}</span>
+      </p>
+    </NuxtLink>
+  </article>
+
+  <article
+    v-else
     class="group relative flex h-full flex-col rounded-[28px] bg-white p-2.5 shadow-soft ring-1 ring-rosewood/5 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-lift"
   >
     <!-- Three-photo collage -->
@@ -97,10 +157,14 @@
 import { categoryName } from '~/composables/useCatalog'
 import { listingLink } from '~/composables/useListing'
 
-const props = defineProps({ item: { type: Object, required: true } })
+const props = defineProps({
+  item: { type: Object, required: true },
+  compact: { type: Boolean, default: false }
+})
 const { isFavourite, toggleFavourite } = useFavourites()
 const fav = computed(() => isFavourite(props.item.id))
 const category = computed(() => categoryName(props.item.categoryKey))
+const logoImage = computed(() => props.item.logo || props.item.avatar || props.item.gallery?.[0] || '')
 
 // Monogram for listings without an owner photo, e.g. "Raja Jewellers" -> "RJ"
 const initials = computed(() =>

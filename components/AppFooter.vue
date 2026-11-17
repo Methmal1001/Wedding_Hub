@@ -120,6 +120,7 @@ const menu = [
   { label: 'Wedding Ideas', target: 'inspiration' },
   { label: 'Advertise with us', to: '/list-your-business#advertising' },
   { label: 'List your business', to: '/list-your-business' },
+  { label: 'Contact us', to: '/contact-us' },
   { label: 'Log in', to: '/auth/login' },
   { label: 'Create an account', to: '/auth/register' }
 ]

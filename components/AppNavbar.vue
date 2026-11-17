@@ -369,20 +369,21 @@ const doLogout = () => {
 const venuesCategory = weddingCategories.find((c) => c.key === 'venues')
 const megaCat = computed(() => weddingCategories.find((c) => c.key === megaKey.value) || weddingCategories[0])
 
-// Menu structure follows weddingdirectory.lk: Home, Categories, Venues, Blog,
-// Advertise with us, Contact us.
+// Primary navigation for the Wedding Hub directory.
 const menu = [
   { label: 'Home', target: 'home' },
+  { label: 'Catalog', to: '/catalog' },
   { label: 'Categories', dropdown: 'categories' },
   { label: 'Wedding Venues', dropdown: 'venues' },
-  { label: 'Blog', soon: 'The Wedding Hub blog' },
   { label: 'Advertise with us', to: '/list-your-business#advertising' },
-  { label: 'Contact us', target: 'contact' }
+  { label: 'Contact us', to: '/contact-us' }
 ]
 
 const onCatalog = computed(() => ['/catalog', '/sub-category/', '/listing/'].some((p) => route.path.startsWith(p)))
 const activeLink = computed(() => {
+  if (route.path === '/contact-us') return 'Contact us'
   if (route.path.startsWith('/list-your-business')) return 'Advertise with us'
+  if (route.path === '/catalog' && !route.query.category) return 'Catalog'
   if (onCatalog.value) {
     const slug = route.params.slug || route.params.sub
     const key = slug ? findSubBySlug(String(slug))?.category.key : route.query.category

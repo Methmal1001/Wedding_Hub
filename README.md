@@ -26,6 +26,7 @@ Restart the dev server after changing `tailwind.config.js` or `nuxt.config.js`.
 ## Pages
 
 - `/` – animated splash screen + homepage
+- `/contact-us` – contact details and demo enquiry form
 - `/catalog` – searchable vendor catalog. Filters live in the URL, e.g. `/catalog?category=photography&loc=Galle`
 - `/catalog?category=<key>` – category page (rotating banner, service tiles, side banners)
 - `/sub-category/<service>` – service page with listings (grid / image view)
