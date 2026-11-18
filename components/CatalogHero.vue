@@ -29,13 +29,7 @@
     <div aria-hidden="true" class="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-rosewood-900/65 to-transparent" />
 
     <div class="container-site flex min-h-[320px] flex-col justify-center py-10 sm:min-h-[360px] sm:py-12 lg:min-h-[400px]">
-      <nav aria-label="Breadcrumb" class="text-xs text-white/70">
-        <NuxtLink to="/" class="transition hover:text-white">Home</NuxtLink>
-        <span class="mx-2 text-white/35">/</span>
-        <span class="text-gold-light">Catalog</span>
-      </nav>
-
-      <p class="mt-6 text-[11px] font-medium uppercase tracking-[0.32em] text-gold-light">Wedding Hub · Sri Lanka</p>
+      <p class="text-[11px] font-medium uppercase tracking-[0.32em] text-gold-light">Wedding Hub · Sri Lanka</p>
       <Transition name="catalog-copy" mode="out-in">
         <div :key="index" class="mt-3 max-w-3xl" aria-live="polite">
           <h1 class="font-serif text-[2.35rem] font-semibold leading-[1.05] sm:text-5xl lg:text-6xl">
@@ -124,7 +118,7 @@ const { index, tick, paused, go, next, prev, pause, resume } = useRotator(comput
   position: absolute;
   inset: 0;
   transform-origin: left;
-  background: #E6D3A8;
+  background: #00F2FF;
   animation: catalog-dot-progress linear forwards;
 }
 .hero-dot-progress.is-paused {

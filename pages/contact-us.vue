@@ -65,7 +65,7 @@
             </a>
 
             <div class="flex items-start gap-4 rounded-2xl bg-white p-5 shadow-soft ring-1 ring-rosewood/5">
-              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gold/15 text-gold-dark">
+              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-green-50 text-green-600">
                 <AppIcon name="pin" :size="20" />
               </span>
               <div>

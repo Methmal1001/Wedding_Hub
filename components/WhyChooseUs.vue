@@ -71,7 +71,7 @@ const features = [
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(145deg, #B4637A 0%, #6E3446 100%);
+  background: linear-gradient(145deg, #0049F2 0%, #002A8F 100%);
   opacity: 0;
   transition: opacity 0.5s ease;
 }

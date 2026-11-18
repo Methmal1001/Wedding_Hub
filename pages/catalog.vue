@@ -3,7 +3,14 @@
     <AppNavbar />
 
     <main>
-      <CatalogHero />
+      <CategoryHero
+        v-if="activeCategory"
+        :key="activeCategory.key"
+        :category="activeCategory"
+        :slides="activeCategorySlides"
+        :tagline="categoryTagline(activeCategory.key)"
+      />
+      <CatalogHero v-else />
 
       <div class="sticky top-[72px] z-40 border-y border-rosewood/10 bg-ivory/95 shadow-sm backdrop-blur-md">
         <form class="container-site grid grid-cols-2 gap-2.5 py-3 sm:flex sm:gap-2.5" role="search" @submit.prevent="applySearch">
@@ -20,7 +27,7 @@
           </label>
           <label class="relative min-w-0 sm:w-44 sm:shrink-0">
             <span class="sr-only">Location</span>
-            <AppIcon name="pin" :size="16" class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-rosewood" />
+            <AppIcon name="pin" :size="16" class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-green-600" />
             <select
               :value="filters.loc"
               class="select-pill pl-10"
@@ -40,9 +47,44 @@
           </label>
         </form>
       </div>
+      <AppBreadcrumb :items="crumbs" class="border-b border-rosewood/10" />
+
+      <!-- Category page: services + rotating side banners (no vendor profiles) -->
+      <section v-if="!showListings" class="container-site py-10 sm:py-12">
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] xl:gap-12">
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p class="eyebrow">Browse by service</p>
+                <h2 class="mt-2 font-serif text-3xl font-semibold">{{ activeCategory.name }}</h2>
+              </div>
+              <p class="text-sm text-charcoal-soft">Choose a service to see its vendors</p>
+            </div>
+            <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-4">
+              <NuxtLink
+                v-for="tile in activeSubcategories"
+                :key="tile.name"
+                :to="catalogLink({ category: activeCategory.key, sub: tile.name })"
+                class="sub-tile group block"
+              >
+                <span class="block aspect-[4/3] overflow-hidden rounded-xl">
+                  <img :src="tile.image" alt="" class="h-full w-full object-cover transition duration-700 group-hover:scale-110" loading="lazy">
+                </span>
+                <span class="mt-2.5 block px-1 text-left text-[13px] font-semibold leading-snug text-charcoal transition group-hover:text-rosewood sm:text-sm">
+                  {{ tile.name }}
+                </span>
+                <span class="block px-1 pb-0.5 text-left text-[11px] text-charcoal-soft">
+                  {{ tile.count ? `${tile.count} listing${tile.count > 1 ? 's' : ''}` : 'Explore' }}
+                </span>
+              </NuxtLink>
+            </div>
+          </div>
+          <CategorySidebar :key="activeCategory.key" :category-key="activeCategory.key" class="lg:sticky lg:top-[150px] lg:self-start" />
+        </div>
+      </section>
 
       <!-- Results -->
-      <section class="container-site py-10 sm:py-12">
+      <section v-else class="container-site py-10 sm:py-12">
         <p
           v-if="subFallback"
           class="mb-6 flex items-start gap-3 rounded-2xl bg-gold-light/30 px-4 py-3 text-sm text-charcoal ring-1 ring-gold/30"
@@ -95,8 +137,11 @@
 
 <script setup>
 import CatalogHero from '~/components/CatalogHero.vue'
+import CategoryHero from '~/components/CategoryHero.vue'
 import { locations } from '~/data/locations'
 import { filterCatalog, sortOptions, catalogLink } from '~/composables/useCatalog'
+import { weddingCategories } from '~/data/weddingCategories'
+import { categorySlides, categoryTagline, subcategoryTiles } from '~/composables/useCategoryPage'
 
 // Visiting the catalog counts as having seen the intro, so going back to the
 // homepage from here never replays the splash screen.
@@ -123,6 +168,17 @@ const filters = computed(() => ({
   sort: String(route.query.sort || 'recommended')
 }))
 
+const activeCategory = computed(() => weddingCategories.find((category) => category.key === filters.value.category) || null)
+const activeCategorySlides = computed(() => activeCategory.value ? categorySlides(activeCategory.value.key) : [])
+// A category opens as its own page (services + side banners). Vendor profiles
+// only show there when the visitor searches or picks a location.
+const crumbs = computed(() => {
+  if (!activeCategory.value) return filters.value.q ? [{ label: 'Catalog', to: '/catalog' }, { label: `Search: “${filters.value.q}”` }] : [{ label: 'Catalog' }]
+  return [{ label: 'Categories', to: '/catalog' }, { label: activeCategory.value.name }]
+})
+const showListings = computed(() => !activeCategory.value || !!(filters.value.q || filters.value.loc))
+const activeSubcategories = computed(() => activeCategory.value ? subcategoryTiles(activeCategory.value.key) : [])
+
 // If a sub-category has no listings yet, fall back to its whole category
 // and tell the user, instead of showing an empty page.
 const exact = computed(() => filterCatalog(filters.value))
@@ -137,6 +193,7 @@ const summary = computed(() => {
   const parts = []
   if (filters.value.q) parts.push(`“${filters.value.q}”`)
   if (filters.value.loc) parts.push(`in ${filters.value.loc}`)
+  if (activeCategory.value) parts.push(activeCategory.value.name)
   return parts.join(' ')
 })
 
@@ -183,8 +240,10 @@ const syncPageSize = () => {
 }
 
 useSeoMeta({
-  title: 'Catalog – Wedding Hub',
-  description: 'Browse wedding photographers, venues, bridal salons, florists, cakes and more across Sri Lanka.'
+  title: () => activeCategory.value ? `${activeCategory.value.name} – Wedding Hub` : 'Catalog – Wedding Hub',
+  description: () => activeCategory.value
+    ? `Browse ${activeCategory.value.name.toLowerCase()} wedding services and vendors across Sri Lanka.`
+    : 'Browse wedding photographers, venues, bridal salons, florists, cakes and more across Sri Lanka.'
 })
 
 onMounted(() => {
@@ -199,6 +258,9 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.sub-tile {
+  @apply relative rounded-2xl bg-white p-2 ring-1 ring-charcoal/10 transition duration-300 hover:-translate-y-0.5 hover:shadow-soft hover:ring-rosewood/30;
+}
 .select-pill {
   @apply h-12 w-full cursor-pointer appearance-none rounded-full border border-rosewood/15 bg-white pr-10 text-[15px] text-charcoal shadow-sm outline-none transition focus:border-rosewood/40 focus:ring-4 focus:ring-rosewood/10;
 }

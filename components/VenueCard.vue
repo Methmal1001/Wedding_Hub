@@ -9,7 +9,7 @@
       loading="lazy"
       class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-[1.4s] ease-out group-hover:scale-110"
     >
-    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-[#241319]/95 via-[#241319]/35 to-transparent transition-opacity duration-500 group-hover:from-[#3a1d29]/95" />
+    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-[#03102E]/95 via-[#03102E]/35 to-transparent transition-opacity duration-500 group-hover:from-[#0A1F5C]/95" />
 
     <!-- Top badges -->
     <div class="absolute inset-x-4 top-4 flex items-start justify-between gap-2">
@@ -19,7 +19,7 @@
       <button
         type="button"
         class="grid h-10 w-10 shrink-0 place-items-center rounded-full backdrop-blur transition-all duration-300 hover:scale-110"
-        :class="fav ? 'bg-rosewood text-white' : 'bg-white/90 text-rosewood hover:bg-white'"
+        :class="fav ? 'bg-white text-rose-600 ring-1 ring-rose-200' : 'bg-white/90 text-rose-500 hover:bg-white'"
         :aria-pressed="fav"
         :aria-label="fav ? `Remove ${venue.name} from favourites` : `Save ${venue.name} to favourites`"
         @click="toggleFavourite(venue)"
@@ -31,7 +31,7 @@
     <!-- Content -->
     <div class="p-5 text-white sm:p-7">
       <div class="flex items-center gap-2 text-sm">
-        <AppIcon name="star" :size="15" filled class="text-[#E6C27A]" />
+        <AppIcon name="star" :size="15" filled class="text-amber-400" />
         <span class="font-semibold">{{ venue.rating.toFixed(1) }}</span>
         <span class="text-white/60">({{ venue.reviews }} reviews)</span>
       </div>
@@ -41,7 +41,7 @@
       </h3>
 
       <p class="mt-1.5 flex items-center gap-1.5 text-sm text-white/80">
-        <AppIcon name="pin" :size="15" />
+        <AppIcon name="pin" :size="15" class="text-green-400" />
         {{ venue.location }}, Sri Lanka
       </p>
 

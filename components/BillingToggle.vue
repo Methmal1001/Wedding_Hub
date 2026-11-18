@@ -16,7 +16,7 @@
       @click="$emit('update:modelValue', o.value)"
     >
       {{ o.label }}
-      <span v-if="o.badge" class="rounded-full bg-gold px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-white">{{ o.badge }}</span>
+      <span v-if="o.badge" class="rounded-full bg-gold px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-rosewood-900">{{ o.badge }}</span>
     </button>
   </div>
 </template>

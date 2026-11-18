@@ -36,7 +36,7 @@
           </div>
           <AdminBadge :status="r.status" />
         </div>
-        <div class="mt-3 flex items-center gap-0.5 text-gold" :aria-label="`${r.rating} out of 5 stars`">
+        <div class="mt-3 flex items-center gap-0.5 text-amber-400" :aria-label="`${r.rating} out of 5 stars`">
           <AppIcon v-for="n in 5" :key="n" name="star" :size="15" :filled="n <= r.rating" :class="n <= r.rating ? '' : 'text-charcoal/15'" />
         </div>
         <p class="mt-2 font-semibold">{{ r.title }}</p>

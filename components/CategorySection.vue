@@ -21,7 +21,7 @@
             loading="lazy"
             class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-110"
           >
-          <div class="absolute inset-0 -z-10 bg-gradient-to-t from-[#241319]/90 via-[#241319]/25 to-transparent" />
+          <div class="absolute inset-0 -z-10 bg-gradient-to-t from-[#03102E]/90 via-[#03102E]/25 to-transparent" />
           <div class="absolute inset-0 -z-10 bg-rosewood/0 transition-colors duration-500 group-hover:bg-rosewood/25" />
 
           <span class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white opacity-0 ring-1 ring-white/40 backdrop-blur transition-all duration-500 group-hover:opacity-100 sm:right-4 sm:top-4">

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#FAF6F4] text-charcoal">
+  <div class="min-h-screen bg-[#F5F8FC] text-charcoal">
     <!-- ============ Sidebar ============ -->
     <Transition name="fade">
       <div v-if="menuOpen" class="fixed inset-0 z-40 bg-charcoal/50 lg:hidden" @click="menuOpen = false" />
@@ -60,7 +60,7 @@
 
     <!-- ============ Main ============ -->
     <div class="lg:pl-[264px]">
-      <header class="sticky top-0 z-30 border-b border-charcoal/[0.07] bg-[#FAF6F4]/90 backdrop-blur">
+      <header class="sticky top-0 z-30 border-b border-charcoal/[0.07] bg-[#F5F8FC]/90 backdrop-blur">
         <div class="flex h-[68px] items-center gap-3 px-4 sm:px-6 lg:px-8">
           <button type="button" class="adm-icon-btn lg:hidden" aria-label="Open menu" @click="menuOpen = true">
             <AppIcon name="menu" :size="20" />

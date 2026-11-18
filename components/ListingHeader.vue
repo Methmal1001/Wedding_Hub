@@ -41,12 +41,12 @@
             <h1 class="mt-1.5 font-serif text-[2rem] font-semibold leading-[1.05] text-charcoal sm:text-5xl">{{ listing.name }}</h1>
             <p class="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-charcoal-soft">
               <span v-if="listing.rating" class="flex items-center gap-1 font-semibold text-charcoal">
-                <AppIcon name="star" :size="15" filled class="text-gold" />
+                <AppIcon name="star" :size="15" filled class="text-amber-400" />
                 {{ listing.rating.toFixed(1) }}
                 <span v-if="listing.reviewCount" class="font-normal text-charcoal-soft">({{ listing.reviewCount }} reviews)</span>
               </span>
               <span class="flex items-center gap-1">
-                <AppIcon name="pin" :size="15" class="text-rosewood" />
+                <AppIcon name="pin" :size="15" class="text-green-600" />
                 {{ listing.area || listing.location }}
               </span>
               <span v-if="listing.owner">by {{ listing.owner }}</span>
@@ -66,16 +66,51 @@
           <button
             type="button"
             class="icon-btn"
-            :class="{ 'is-on': fav }"
+            :class="fav ? '!bg-rose-50 !text-rose-600 !ring-rose-300' : '!text-rose-500 hover:!bg-rose-50'"
             :aria-pressed="fav"
             :aria-label="fav ? 'Remove from favourites' : 'Save to favourites'"
             @click="toggleFavourite(listing)"
           >
             <AppIcon :key="String(fav)" name="heart" :size="17" :filled="fav" :class="{ 'animate-heart-pop': fav }" />
           </button>
-          <button type="button" class="icon-btn" aria-label="Share" @click="share">
-            <AppIcon name="arrowRight" :size="17" class="-rotate-45" />
-          </button>
+          <!-- Share: device share sheet, copy link, or share to an app -->
+          <div ref="shareBox" class="relative">
+            <button
+              type="button"
+              class="icon-btn"
+              :class="{ 'is-on': shareOpen }"
+              aria-label="Share this listing"
+              title="Share"
+              aria-haspopup="menu"
+              :aria-expanded="shareOpen"
+              @click="shareOpen = !shareOpen"
+            >
+              <AppIcon name="share" :size="18" />
+            </button>
+            <Transition name="share-pop">
+              <div
+                v-if="shareOpen"
+                class="absolute bottom-[calc(100%+10px)] right-0 z-50 w-60 rounded-2xl bg-white p-1.5 shadow-lift ring-1 ring-rosewood/10"
+                role="menu"
+              >
+                <p class="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-[0.16em] text-charcoal-soft">Share this listing</p>
+                <button v-if="canNativeShare" type="button" role="menuitem" class="share-item" @click="nativeShare">
+                  <span class="share-ico bg-rosewood-50 text-rosewood"><AppIcon name="share" :size="15" /></span>
+                  Share via…
+                </button>
+                <button type="button" role="menuitem" class="share-item" @click="copyLink">
+                  <span class="share-ico" :class="copied ? 'bg-emerald-50 text-emerald-600' : 'bg-gold-light/40 text-gold-dark'">
+                    <AppIcon :name="copied ? 'check' : 'copy'" :size="15" />
+                  </span>
+                  {{ copied ? 'Link copied!' : 'Copy link' }}
+                </button>
+                <a v-for="t in shareTargets" :key="t.label" :href="t.href" target="_blank" rel="noopener noreferrer" role="menuitem" class="share-item" @click="shareOpen = false">
+                  <span class="share-ico" :class="t.cls"><AppIcon :name="t.icon" :size="15" /></span>
+                  {{ t.label }}
+                </a>
+              </div>
+            </Transition>
+          </div>
         </div>
       </div>
     </div>
@@ -102,19 +137,74 @@ const initials = computed(() =>
     .join('')
 )
 
-const share = async () => {
-  const url = window.location.href
+// ---- share menu ----
+const shareOpen = ref(false)
+const shareBox = ref(null)
+const copied = ref(false)
+const canNativeShare = ref(false)
+const pageUrl = ref('')
+const shareText = computed(() => `${props.listing.name} on Wedding Hub`)
+const shareTargets = computed(() => {
+  const url = encodeURIComponent(pageUrl.value)
+  const text = encodeURIComponent(shareText.value)
+  return [
+    { label: 'WhatsApp', icon: 'whatsapp', cls: 'bg-[#25D366]/10 text-[#1EBE5A]', href: `https://wa.me/?text=${text}%20${url}` },
+    { label: 'Facebook', icon: 'facebook', cls: 'bg-[#1877F2]/10 text-[#1877F2]', href: `https://www.facebook.com/sharer/sharer.php?u=${url}` },
+    { label: 'X (Twitter)', icon: 'x', cls: 'bg-charcoal/[0.06] text-charcoal', href: `https://twitter.com/intent/tweet?text=${text}&url=${url}` },
+    { label: 'E-mail', icon: 'mail', cls: 'bg-sky-50 text-sky-600', href: `mailto:?subject=${text}&body=${text}%0A${url}` }
+  ]
+})
+
+const nativeShare = async () => {
+  shareOpen.value = false
   try {
-    if (navigator.share) {
-      await navigator.share({ title: props.listing.name, url })
-      return
-    }
-    await navigator.clipboard.writeText(url)
-    show('Link copied to clipboard')
+    await navigator.share({ title: props.listing.name, text: shareText.value, url: pageUrl.value })
   } catch {
-    // Share sheet dismissed or clipboard blocked – nothing to do.
+    // Share sheet dismissed – nothing to do.
   }
 }
+
+// Clipboard API needs a secure page (https/localhost); fall back to execCommand.
+const copyLink = async () => {
+  let ok = false
+  try {
+    await navigator.clipboard.writeText(pageUrl.value)
+    ok = true
+  } catch {
+    const ta = Object.assign(document.createElement('textarea'), { value: pageUrl.value })
+    ta.style.cssText = 'position:fixed;opacity:0'
+    document.body.appendChild(ta)
+    ta.select()
+    try {
+      ok = document.execCommand('copy')
+    } catch {}
+    ta.remove()
+  }
+  if (!ok) return show('Your browser blocked copying. Copy the address from the address bar instead.', { title: 'Couldn’t copy', icon: 'close' })
+  copied.value = true
+  show('The link to this listing is on your clipboard.', { title: 'Link copied', icon: 'check' })
+  setTimeout(() => {
+    copied.value = false
+    shareOpen.value = false
+  }, 1200)
+}
+
+const onDocClick = (e) => {
+  if (shareBox.value && !shareBox.value.contains(e.target)) shareOpen.value = false
+}
+const onKey = (e) => {
+  if (e.key === 'Escape') shareOpen.value = false
+}
+onMounted(() => {
+  pageUrl.value = window.location.href.split('#')[0]
+  canNativeShare.value = typeof navigator.share === 'function'
+  document.addEventListener('click', onDocClick)
+  document.addEventListener('keydown', onKey)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('click', onDocClick)
+  document.removeEventListener('keydown', onKey)
+})
 </script>
 
 <style scoped>
@@ -123,5 +213,21 @@ const share = async () => {
 }
 .icon-btn.is-on {
   @apply bg-rosewood text-white ring-rosewood hover:bg-rosewood-700;
+}
+.share-item {
+  @apply flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-charcoal transition hover:bg-rosewood-50;
+}
+.share-ico {
+  @apply grid h-8 w-8 shrink-0 place-items-center rounded-lg;
+}
+.share-pop-enter-active,
+.share-pop-leave-active {
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: bottom right;
+}
+.share-pop-enter-from,
+.share-pop-leave-to {
+  opacity: 0;
+  transform: translateY(6px) scale(0.95);
 }
 </style>

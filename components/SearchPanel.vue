@@ -78,7 +78,7 @@
         class="field relative rounded-[20px] md:rounded-none md:border-l md:border-rosewood/10"
         :class="{ 'ring-2 ring-gold/40': focused === 'loc' }"
       >
-        <AppIcon name="pin" :size="20" class="shrink-0 text-gold-dark" />
+        <AppIcon name="pin" :size="20" class="shrink-0 text-green-600" />
         <span class="min-w-0 flex-1">
           <span class="field-label">Location</span>
           <select

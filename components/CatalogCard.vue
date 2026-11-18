@@ -5,7 +5,7 @@
   >
     <button
       type="button"
-      class="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-rosewood-50 text-rosewood transition hover:scale-110 hover:bg-rosewood hover:text-white"
+      class="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-rose-50 text-rose-500 transition hover:scale-110 hover:bg-rose-500 hover:text-white"
       :aria-pressed="fav"
       :aria-label="fav ? `Remove ${item.name} from favourites` : `Save ${item.name} to favourites`"
       @click="toggleFavourite(item)"
@@ -46,13 +46,13 @@
         class="mt-2 flex items-center justify-center gap-1 text-xs text-charcoal-soft"
         :aria-label="`Rated ${item.rating.toFixed(1)} out of 5${item.reviews ? `, ${item.reviews} reviews` : ''}`"
       >
-        <AppIcon name="star" :size="14" filled class="text-gold" />
+        <AppIcon name="star" :size="14" filled class="text-amber-400" />
         <span class="font-semibold text-charcoal">{{ item.rating.toFixed(1) }}</span>
         <span v-if="item.reviews">({{ item.reviews }})</span>
       </p>
       <p v-else class="mt-2 text-xs text-charcoal-soft">No ratings yet</p>
       <p class="mt-2 flex items-center justify-center gap-1.5 text-xs leading-snug text-charcoal-soft sm:text-sm">
-        <AppIcon name="pin" :size="14" class="shrink-0 text-rosewood" />
+        <AppIcon name="pin" :size="14" class="shrink-0 text-green-600" />
         <span>{{ item.area || item.location }}</span>
       </p>
     </NuxtLink>
@@ -76,7 +76,7 @@
       <button
         type="button"
         class="absolute right-2.5 top-2.5 grid h-9 w-9 place-items-center rounded-full backdrop-blur transition-all duration-300 hover:scale-110"
-        :class="fav ? 'bg-rosewood text-white' : 'bg-white/90 text-rosewood hover:bg-white'"
+        :class="fav ? 'bg-white text-rose-600 ring-1 ring-rose-200' : 'bg-white/90 text-rose-500 hover:bg-white'"
         :aria-pressed="fav"
         :aria-label="fav ? `Remove ${item.name} from favourites` : `Save ${item.name} to favourites`"
         @click="toggleFavourite(item)"
@@ -122,13 +122,13 @@
       <p class="mt-2 flex items-center gap-2 text-sm text-charcoal-soft">
         <template v-if="item.rating">
           <span class="flex items-center gap-1 font-semibold text-charcoal">
-            <AppIcon name="star" :size="14" filled class="text-gold" />
+            <AppIcon name="star" :size="14" filled class="text-amber-400" />
             {{ item.rating.toFixed(1) }}
           </span>
           <span class="text-charcoal-soft/50">•</span>
         </template>
         <span class="flex items-center gap-1">
-          <AppIcon name="pin" :size="14" class="text-rosewood" />
+          <AppIcon name="pin" :size="14" class="text-green-600" />
           {{ item.area || item.location }}
         </span>
       </p>

@@ -21,7 +21,7 @@
               <span class="relative whitespace-nowrap italic text-gold-light">
                 Wedding Hub
                 <svg class="underline-draw absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true">
-                  <path d="M3 9C80 2 220 2 297 8" pathLength="1" fill="none" stroke="#E6D3A8" stroke-width="3" stroke-linecap="round" />
+                  <path d="M3 9C80 2 220 2 297 8" pathLength="1" fill="none" stroke="#00F2FF" stroke-width="3" stroke-linecap="round" />
                 </svg>
               </span>
             </h1>
@@ -64,7 +64,7 @@
               </div>
             </div>
             <div class="float-card float-card--b">
-              <span class="grid h-10 w-10 place-items-center rounded-full bg-gold text-white"><AppIcon name="star" :size="18" filled /></span>
+              <span class="grid h-10 w-10 place-items-center rounded-full bg-amber-100 text-amber-500"><AppIcon name="star" :size="18" filled /></span>
               <div>
                 <p class="text-xs font-semibold text-charcoal">New 5★ review</p>
                 <p class="text-[11px] text-charcoal-soft">“Simply magical!”</p>
@@ -159,7 +159,7 @@
                 <li v-for="feat in p.features" :key="feat.text" class="flex items-start gap-2.5" :class="feat.on ? '' : 'opacity-45'">
                   <span
                     class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full"
-                    :class="feat.on ? (p.popular ? 'bg-gold text-white' : 'bg-rosewood text-white') : p.popular ? 'bg-white/15' : 'bg-blush-light text-charcoal-soft'"
+                    :class="feat.on ? (p.popular ? 'bg-gold text-rosewood-900' : 'bg-rosewood text-white') : p.popular ? 'bg-white/15' : 'bg-blush-light text-charcoal-soft'"
                   >
                     <AppIcon :name="feat.on ? 'check' : 'close'" :size="11" :stroke-width="2.8" />
                   </span>
@@ -472,14 +472,14 @@ onBeforeUnmount(() => {
   top: -10%;
   height: 360px;
   width: 360px;
-  background: rgba(180, 99, 122, 0.55);
+  background: rgba(0, 73, 242, 0.55);
 }
 .glow--b {
   bottom: -20%;
   right: 10%;
   height: 420px;
   width: 420px;
-  background: rgba(201, 168, 106, 0.35);
+  background: rgba(0, 210, 230, 0.35);
   animation-delay: -7s;
 }
 @keyframes glow-move {
@@ -531,7 +531,7 @@ onBeforeUnmount(() => {
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.96);
   padding: 0.6rem 0.9rem 0.6rem 0.6rem;
-  box-shadow: 0 18px 40px -16px rgba(66, 32, 43, 0.55);
+  box-shadow: 0 18px 40px -16px rgba(0, 26, 87, 0.55);
   animation: card-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both, bob 5s ease-in-out infinite;
 }
 .float-card--a {
@@ -579,7 +579,7 @@ onBeforeUnmount(() => {
   @apply relative mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-white text-rosewood shadow-lift ring-1 ring-rosewood/10;
 }
 .step-no {
-  @apply absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-gold text-[11px] font-bold text-white ring-2 ring-white;
+  @apply absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-gold text-[11px] font-bold text-rosewood-900 ring-2 ring-white;
 }
 
 .plan {
@@ -623,7 +623,7 @@ onBeforeUnmount(() => {
   @apply h-2 rounded bg-white/20;
 }
 .mock-hl {
-  background: linear-gradient(110deg, #c9a86a 0%, #e6d3a8 40%, #c9a86a 80%);
+  background: linear-gradient(110deg, #00D2E6 0%, #00F2FF 40%, #00D2E6 80%);
   background-size: 200% 100%;
   animation: shimmer 2.6s linear infinite;
 }

@@ -8,7 +8,7 @@
         loading="lazy"
         class="absolute inset-0 -z-10 h-full w-full object-cover opacity-25 mix-blend-luminosity"
       >
-      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-rosewood/95 via-rosewood-800/90 to-[#241319]/95" />
+      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-rosewood/95 via-rosewood-800/90 to-[#03102E]/95" />
       <!-- Decorative rings -->
       <div aria-hidden="true" class="pointer-events-none absolute -right-24 -top-24 -z-10 h-80 w-80 rounded-full border border-blush/15" />
       <div aria-hidden="true" class="pointer-events-none absolute -right-8 -top-8 -z-10 h-80 w-80 rounded-full border border-gold/15" />

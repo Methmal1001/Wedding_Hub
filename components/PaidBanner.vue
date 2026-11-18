@@ -41,7 +41,7 @@
           <p class="mt-3 font-serif text-[2.1rem] font-semibold leading-[1.05] sm:text-5xl">{{ ad.name }}</p>
           <p class="mt-3 line-clamp-2 max-w-xl text-sm leading-relaxed text-white/80 sm:text-base">{{ ad.description }}</p>
           <p class="mt-3 flex items-start gap-1.5 text-xs text-white/70 sm:text-sm">
-            <AppIcon name="pin" :size="15" class="mt-px shrink-0 text-gold-light" />
+            <AppIcon name="pin" :size="15" class="mt-px shrink-0 text-green-400" />
             {{ ad.address }}
           </p>
           <div class="mt-5 flex flex-wrap gap-2.5">
@@ -167,7 +167,7 @@ const { index, tick, paused, go, next, prev, pause, resume } = useRotator(comput
   position: absolute;
   inset: 0;
   transform-origin: left;
-  background: #E6D3A8;
+  background: #00F2FF;
   animation: dot-progress linear forwards;
 }
 .dot-fill.is-paused {

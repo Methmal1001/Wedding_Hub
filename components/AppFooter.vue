@@ -1,12 +1,21 @@
 <template>
-  <footer id="contact" class="relative scroll-mt-20 overflow-hidden bg-[#2a171e] text-white/70">
+  <footer id="contact" class="relative scroll-mt-20 overflow-hidden bg-[#061540] text-white/70">
     <div aria-hidden="true" class="pointer-events-none absolute -top-40 left-1/2 h-80 w-[700px] -translate-x-1/2 rounded-full bg-rosewood/30 blur-3xl" />
 
     <div class="container-site relative pt-16 sm:pt-20">
       <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1.5fr_0.9fr_1.1fr] lg:gap-10">
         <!-- Brand -->
         <div>
-          <BrandLogo light />
+          <NuxtLink to="/" class="inline-block transition-opacity hover:opacity-85" aria-label="Wedding Hub by SLTMOBITEL – home">
+            <img
+              src="/images/wedding-hub-logo-white.png"
+              alt="Wedding Hub by SLTMOBITEL"
+              width="1200"
+              height="233"
+              loading="lazy"
+              class="h-auto w-[230px] sm:w-[260px]"
+            />
+          </NuxtLink>
           <p class="mt-5 text-[11px] font-medium uppercase tracking-[0.28em] text-gold">Sri Lanka's No. 1 Wedding Website</p>
           <p class="mt-3 max-w-sm text-sm leading-relaxed">
             Wedding Hub offers you hundreds of wedding vendors of all categories, enabling you to find the perfect
@@ -52,7 +61,7 @@
           <h3 class="footer-title">Contact us</h3>
           <ul class="mt-5 space-y-4 text-sm">
             <li class="flex items-start gap-3">
-              <AppIcon name="pin" :size="18" class="mt-0.5 shrink-0 text-gold" />
+              <AppIcon name="pin" :size="18" class="mt-0.5 shrink-0 text-green-400" />
               <span>No. 42, Galle Road,<br>Colombo 03, Sri Lanka</span>
             </li>
             <li class="flex items-start gap-3">

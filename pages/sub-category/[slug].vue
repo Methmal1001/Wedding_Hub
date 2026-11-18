@@ -15,7 +15,7 @@
 
       <!-- Toolbar: search within this service, location, sort -->
       <section class="border-b border-rosewood/10 bg-gradient-to-b from-blush-light via-blush-light/60 to-ivory">
-        <form class="container-site flex flex-col gap-2.5 py-6 sm:flex-row" role="search" @submit.prevent="applySearch">
+        <form class="container-site flex flex-col gap-2.5 pb-1 pt-6 sm:flex-row" role="search" @submit.prevent="applySearch">
           <label class="relative flex-1">
             <span class="sr-only">Search {{ sub }}</span>
             <AppIcon name="search" :size="18" class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-charcoal-soft" />
@@ -29,7 +29,7 @@
           </label>
           <label class="relative sm:w-48">
             <span class="sr-only">Location</span>
-            <AppIcon name="pin" :size="16" class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-rosewood" />
+            <AppIcon name="pin" :size="16" class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-green-600" />
             <select :value="filters.loc" class="select-pill pl-10" @change="update({ loc: $event.target.value })">
               <option value="">All locations</option>
               <option v-for="l in locations" :key="l" :value="l">{{ l }}</option>
@@ -44,6 +44,7 @@
             <AppIcon name="chevronDown" :size="15" class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-charcoal-soft" />
           </label>
         </form>
+        <AppBreadcrumb :items="crumbs" />
       </section>
 
       <section class="container-site py-10 sm:py-12">
@@ -221,6 +222,11 @@ if (!match.value) {
 }
 const category = computed(() => match.value.category)
 const sub = computed(() => match.value.sub)
+const crumbs = computed(() => [
+  { label: 'Categories', to: '/catalog' },
+  { label: category.value.name, to: catalogLink({ category: category.value.key }) },
+  { label: sub.value }
+])
 
 useSeoMeta({
   title: () => `${sub.value} – ${category.value.name} – Wedding Hub`,

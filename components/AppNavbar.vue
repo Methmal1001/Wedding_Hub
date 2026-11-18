@@ -12,7 +12,7 @@
   >
     <!-- Top bar -->
     <div
-      class="overflow-hidden bg-rosewood text-white transition-[height] duration-500"
+      class="overflow-hidden bg-gradient-to-r from-gold-light via-[#7DF7FF] to-[#4DFF00] font-medium text-rosewood-900 transition-[height] duration-500"
       :class="scrolled ? 'h-0' : 'h-9'"
     >
       <div class="container-site flex h-9 items-center justify-between gap-4 text-[11px] tracking-[0.18em]">
@@ -27,10 +27,10 @@
               <AppIcon name="user" :size="14" />
               Log in
             </NuxtLink>
-            <span class="h-3 w-px bg-white/30" />
+            <span class="h-3 w-px bg-rosewood-900/25" />
             <NuxtLink to="/auth/register" class="topbar-link">Sign up</NuxtLink>
           </template>
-          <span class="h-3 w-px bg-white/30" />
+          <span class="h-3 w-px bg-rosewood-900/25" />
           <button type="button" class="topbar-link" @click="go({ to: '/list-your-business' })">
             <AppIcon name="store" :size="14" />
             Are you a vendor?
@@ -102,11 +102,7 @@
 
         <!-- Right actions -->
         <div class="flex items-center gap-1.5 sm:gap-2.5">
-          <button type="button" class="icon-btn" aria-label="Search the directory" @click="focusSearch">
-            <AppIcon name="search" :size="20" />
-          </button>
-
-          <button type="button" class="btn-primary btn-shine hidden !min-h-[42px] whitespace-nowrap !px-5 lg:inline-flex" @click="go({ to: '/list-your-business' })">
+          <button type="button" class="btn hidden !min-h-[42px] whitespace-nowrap border-2 border-rosewood bg-transparent !px-5 text-rosewood hover:-translate-y-0.5 hover:bg-rosewood hover:text-white lg:inline-flex" @click="go({ to: '/list-your-business' })">
             <AppIcon name="store" :size="17" />
             List Your Business
           </button>
@@ -117,7 +113,7 @@
             <span
               v-if="favourites.length"
               :key="favourites.length"
-              class="animate-heart-pop absolute -right-0.5 -top-0.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-gold px-1 text-[10px] font-semibold text-white ring-2 ring-ivory"
+              class="animate-heart-pop absolute -right-0.5 -top-0.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold text-white ring-2 ring-ivory"
             >
               {{ favourites.length }}
             </span>
@@ -133,12 +129,12 @@
               @click="toggle('account')"
             >
               <img v-if="user.avatar" :src="user.avatar" alt="" class="h-full w-full object-cover">
-              <span v-else class="grid h-full w-full place-items-center bg-gradient-to-br from-rosewood to-rosewood-800 font-serif text-base font-semibold text-white">{{ userInitials }}</span>
+              <span v-else class="grid h-full w-full place-items-center bg-transparent font-serif text-base font-semibold text-rosewood">{{ userInitials }}</span>
             </button>
             <span
               v-if="favourites.length"
               :key="favourites.length"
-              class="animate-heart-pop pointer-events-none absolute -right-1 -top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-gold px-1 text-[10px] font-semibold text-white ring-2 ring-ivory"
+              class="animate-heart-pop pointer-events-none absolute -right-1 -top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold text-white ring-2 ring-ivory"
             >
               {{ favourites.length }}
             </span>
@@ -155,7 +151,7 @@
                 <ul class="p-1.5 text-sm">
                   <li v-for="l in accountLinks" :key="l.label" role="none">
                     <NuxtLink :to="l.to" role="menuitem" class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-charcoal transition hover:bg-rosewood-50 hover:text-rosewood" @click="closeAll">
-                      <AppIcon :name="l.icon" :size="16" class="text-rosewood" />
+                      <AppIcon :name="l.icon" :size="16" :filled="l.icon === 'heart'" :class="l.icon === 'heart' ? 'text-rose-500' : 'text-rosewood'" />
                       {{ l.label }}
                       <span v-if="l.count" class="ml-auto rounded-full bg-blush-light px-2 text-[11px] text-rosewood-700">{{ l.count }}</span>
                     </NuxtLink>
@@ -234,7 +230,7 @@
                 @click="closeAll"
               >
                 <img :src="megaCat.image" :alt="megaCat.name" class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105">
-                <span class="absolute inset-0 -z-10 bg-gradient-to-t from-[#241319]/90 via-[#241319]/30 to-transparent" />
+                <span class="absolute inset-0 -z-10 bg-gradient-to-t from-[#03102E]/90 via-[#03102E]/30 to-transparent" />
                 <span class="font-serif text-2xl font-semibold leading-tight">{{ megaCat.name }}</span>
                 <span class="mt-2 inline-flex items-center gap-1.5 text-sm text-blush">
                   Explore all
@@ -425,17 +421,6 @@ const go = (item) => {
   else scrollTo(item.target)
 }
 
-const focusSearch = () => {
-  closeAll()
-  if (onCatalog.value) {
-    document.querySelector('main input[type=search]')?.focus()
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-    return
-  }
-  scrollTo('home')
-  setTimeout(() => document.getElementById('search-what')?.focus({ preventScroll: true }), 500)
-}
-
 // Close menus whenever the route changes
 watch(() => route.fullPath, closeAll)
 
@@ -481,13 +466,13 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .shadow-header {
-  box-shadow: 0 10px 30px -14px rgba(110, 52, 70, 0.25);
+  box-shadow: 0 10px 30px -14px rgba(0, 42, 143, 0.25);
 }
 .icon-btn {
   @apply grid h-11 w-11 place-items-center rounded-full text-charcoal transition-all duration-300 hover:bg-rosewood/5 hover:text-rosewood;
 }
 .topbar-link {
-  @apply inline-flex items-center gap-1.5 uppercase text-white/90 transition hover:text-white;
+  @apply inline-flex items-center gap-1.5 uppercase text-rosewood-900/85 transition hover:text-rosewood;
 }
 
 .nav-link {
@@ -503,7 +488,7 @@ onBeforeUnmount(() => {
   bottom: 2px;
   height: 1.5px;
   width: 0;
-  background: linear-gradient(90deg, #c9a86a, #b4637a);
+  background: linear-gradient(90deg, #00D2E6, #0049F2);
   transition: width 0.35s ease, left 0.35s ease;
 }
 .nav-link:hover::after,

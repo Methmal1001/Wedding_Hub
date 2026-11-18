@@ -17,7 +17,7 @@
       <button
         type="button"
         class="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full backdrop-blur transition-all duration-300 hover:scale-110"
-        :class="fav ? 'bg-rosewood text-white' : 'bg-white/90 text-rosewood hover:bg-white'"
+        :class="fav ? 'bg-white text-rose-600 ring-1 ring-rose-200' : 'bg-white/90 text-rose-500 hover:bg-white'"
         :aria-pressed="fav"
         :aria-label="fav ? `Remove ${vendor.name} from favourites` : `Save ${vendor.name} to favourites`"
         @click="toggleFavourite(vendor)"
@@ -26,7 +26,7 @@
       </button>
 
       <p class="absolute bottom-3 left-4 flex items-center gap-1.5 text-xs font-medium text-white">
-        <AppIcon name="pin" :size="14" />
+        <AppIcon name="pin" :size="14" class="text-green-400" />
         {{ vendor.location }}, Sri Lanka
       </p>
     </div>
@@ -56,7 +56,7 @@
       <!-- Listing contact details (shown for directory listings) -->
       <ul v-if="vendor.address || vendor.phone" class="mt-3 space-y-1.5 text-[13px] text-charcoal-soft">
         <li v-if="vendor.address" class="flex items-start gap-2">
-          <AppIcon name="pin" :size="15" class="mt-0.5 shrink-0 text-rosewood" />
+          <AppIcon name="pin" :size="15" class="mt-0.5 shrink-0 text-green-600" />
           <span>{{ vendor.address }}</span>
         </li>
         <li v-if="vendor.phone" class="flex items-start gap-2">

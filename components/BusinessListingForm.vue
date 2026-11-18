@@ -15,8 +15,8 @@
             <AppIcon name="heart" :size="h.s" filled />
           </span>
           <svg viewBox="0 0 80 80" class="success-check mx-auto h-24 w-24" aria-hidden="true">
-            <circle cx="40" cy="40" r="34" pathLength="1" fill="none" stroke="#B4637A" stroke-width="3" />
-            <path d="M26 41l10 10 19-21" pathLength="1" fill="none" stroke="#B4637A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="40" cy="40" r="34" pathLength="1" fill="none" stroke="#0049F2" stroke-width="3" />
+            <path d="M26 41l10 10 19-21" pathLength="1" fill="none" stroke="#0049F2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
           <p class="mt-5 font-script text-4xl text-rosewood">Thank you!</p>
           <h3 class="mt-2 font-serif text-3xl font-semibold text-charcoal">
@@ -383,7 +383,7 @@
           <h4 class="mt-3 text-center font-serif text-2xl font-semibold leading-tight text-charcoal">{{ f.businessName || 'Your business name' }}</h4>
           <p class="mt-0.5 text-center text-xs text-charcoal-soft">{{ categoryObj?.name || 'Category' }}</p>
           <p class="mt-2 flex items-center justify-center gap-1 text-sm text-charcoal-soft">
-            <AppIcon name="pin" :size="14" class="text-rosewood" />
+            <AppIcon name="pin" :size="14" class="text-green-600" />
             {{ f.city || 'City' }}<template v-if="f.islandWide"> · Island-wide</template>
           </p>
           <div class="mt-4 flex flex-wrap justify-center gap-2">
@@ -833,7 +833,7 @@ const nextSteps = [
 
 const burst = Array.from({ length: 12 }, (_, i) => {
   const a = (i / 12) * Math.PI * 2
-  return { x: Math.round(Math.cos(a) * 170), y: Math.round(Math.sin(a) * 120), s: 12 + (i % 3) * 5, d: 0.3 + (i % 4) * 0.05, c: ['#B4637A', '#C9A86A', '#EDC5CA'][i % 3] }
+  return { x: Math.round(Math.cos(a) * 170), y: Math.round(Math.sin(a) * 120), s: 12 + (i % 3) * 5, d: 0.3 + (i % 4) * 0.05, c: ['#0049F2', '#00D2E6', '#BDE9FA'][i % 3] }
 })
 </script>
 

@@ -26,19 +26,7 @@
     <div aria-hidden="true" class="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-rosewood-900/70 to-transparent" />
 
     <div class="container-site flex min-h-[360px] flex-col justify-center py-12 sm:min-h-[420px] lg:min-h-[460px]">
-      <nav aria-label="Breadcrumb" class="text-xs text-white/70">
-        <NuxtLink to="/" class="transition hover:text-white">Home</NuxtLink>
-        <span class="mx-2 text-white/35">/</span>
-        <NuxtLink to="/catalog" class="transition hover:text-white">Categories</NuxtLink>
-        <span class="mx-2 text-white/35">/</span>
-        <template v-if="sub">
-          <NuxtLink :to="catalogLink({ category: category.key })" class="transition hover:text-white">{{ category.name }}</NuxtLink>
-          <span class="mx-2 text-white/35">/</span>
-        </template>
-        <span class="text-gold-light">{{ title }}</span>
-      </nav>
-
-      <p class="mt-6 text-[11px] font-medium uppercase tracking-[0.32em] text-gold-light">
+      <p class="text-[11px] font-medium uppercase tracking-[0.32em] text-gold-light">
         {{ eyebrow || `${category.vendorCount}+ vendors · ${category.subcategories.length} ${category.subcategories.length === 1 ? 'service' : 'services'}` }}
       </p>
       <h1 class="mt-3 max-w-3xl font-serif text-[2.6rem] font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">
@@ -130,7 +118,7 @@ const { index, tick, paused, go, next, prev, pause, resume } = useRotator(comput
   position: absolute;
   inset: 0;
   transform-origin: left;
-  background: #E6D3A8;
+  background: #00F2FF;
   animation-name: dot-progress;
   animation-timing-function: linear;
   animation-fill-mode: forwards;

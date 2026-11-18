@@ -121,7 +121,7 @@ const controlEvents = {
 }
 .field-control:focus {
   @apply border-rosewood/50 bg-white;
-  box-shadow: 0 0 0 4px rgba(180, 99, 122, 0.12), 0 10px 24px -14px rgba(110, 52, 70, 0.45);
+  box-shadow: 0 0 0 4px rgba(0, 73, 242, 0.12), 0 10px 24px -14px rgba(0, 42, 143, 0.45);
 }
 .field-control:disabled {
   @apply cursor-not-allowed bg-blush-light/50 text-charcoal-soft;

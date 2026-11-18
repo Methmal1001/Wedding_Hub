@@ -239,8 +239,8 @@
                   <AppIcon name="heart" :size="h.s" filled />
                 </span>
                 <svg viewBox="0 0 80 80" class="success-check h-24 w-24" aria-hidden="true">
-                  <circle cx="40" cy="40" r="34" pathLength="1" fill="none" stroke="#B4637A" stroke-width="3" />
-                  <path d="M26 41l10 10 19-21" pathLength="1" fill="none" stroke="#B4637A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="40" cy="40" r="34" pathLength="1" fill="none" stroke="#0049F2" stroke-width="3" />
+                  <path d="M26 41l10 10 19-21" pathLength="1" fill="none" stroke="#0049F2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 <p class="mt-5 font-script text-4xl text-rosewood">{{ success.title }}</p>
                 <p class="mt-2 text-sm text-charcoal-soft">{{ success.text }}</p>
@@ -436,7 +436,7 @@ const burst = Array.from({ length: 10 }, (_, i) => {
     r: (i * 37) % 60 - 30,
     s: 12 + (i % 3) * 5,
     d: 0.35 + (i % 4) * 0.05,
-    c: ['#B4637A', '#C9A86A', '#EDC5CA'][i % 3]
+    c: ['#0049F2', '#00D2E6', '#BDE9FA'][i % 3]
   }
 })
 </script>

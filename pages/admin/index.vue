@@ -44,8 +44,8 @@
         </div>
         <div class="relative mt-6">
           <svg :viewBox="`0 0 ${W} ${H + 22}`" class="h-56 w-full" preserveAspectRatio="none" role="img" :aria-label="chartLabel">
-            <line v-for="g in 4" :key="g" x1="0" :x2="W" :y1="H - (H / 4) * g" :y2="H - (H / 4) * g" stroke="#33272C" stroke-opacity=".06" />
-            <line x1="0" :x2="W" :y1="H" :y2="H" stroke="#33272C" stroke-opacity=".15" />
+            <line v-for="g in 4" :key="g" x1="0" :x2="W" :y1="H - (H / 4) * g" :y2="H - (H / 4) * g" stroke="#0F1B33" stroke-opacity=".06" />
+            <line x1="0" :x2="W" :y1="H" :y2="H" stroke="#0F1B33" stroke-opacity=".15" />
             <g v-for="(d, i) in days" :key="d.key">
               <rect
                 :x="i * slot + slot * 0.18"
@@ -155,7 +155,7 @@
         <p class="text-xs text-charcoal-soft">Approved vendor-submitted listings</p>
         <div class="mt-4 flex items-center gap-6">
           <svg viewBox="0 0 42 42" class="h-36 w-36 shrink-0 -rotate-90" role="img" :aria-label="planLabel">
-            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#F7E1E3" stroke-width="6" />
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#E3F6FF" stroke-width="6" />
             <circle
               v-for="seg in planSegments"
               :key="seg.id"
@@ -299,9 +299,9 @@ const planSegments = computed(() => {
   const total = Math.max(1, approved.length)
   let offset = 0
   return [
-    { id: 'free', name: 'Basic', color: '#D9CFD2' },
-    { id: 'silver', name: 'Silver', color: '#B4637A' },
-    { id: 'gold', name: 'Gold', color: '#C9A86A' }
+    { id: 'free', name: 'Basic', color: '#CFD7E3' },
+    { id: 'silver', name: 'Silver', color: '#0049F2' },
+    { id: 'gold', name: 'Gold', color: '#00D2E6' }
   ].map((p) => {
     const count = approved.filter((s) => s.plan === p.id).length
     const pct = (count / total) * 100

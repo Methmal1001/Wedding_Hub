@@ -7,7 +7,7 @@
         class="toast pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl bg-white p-4 shadow-lift ring-1 ring-rosewood/10"
         role="status"
       >
-        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-rosewood-50 text-rosewood">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full" :class="toast.icon === 'heart' ? 'bg-rose-50 text-rose-500' : 'bg-rosewood-50 text-rosewood'">
           <AppIcon :name="toast.icon" :size="18" :filled="toast.icon === 'heart'" />
         </span>
         <div class="min-w-0 flex-1">

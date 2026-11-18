@@ -64,7 +64,7 @@
                 <span class="rounded-full px-2 py-0.5 text-[11px] font-medium" :class="sourceCls[l.source]">{{ sourceLabel[l.source] }}</span>
               </td>
               <td>
-                <span v-if="l.rating" class="flex items-center gap-1"><AppIcon name="star" :size="13" filled class="text-gold" />{{ l.rating.toFixed(1) }} <span class="text-xs text-charcoal-soft">({{ l.reviews }})</span></span>
+                <span v-if="l.rating" class="flex items-center gap-1"><AppIcon name="star" :size="13" filled class="text-amber-400" />{{ l.rating.toFixed(1) }} <span class="text-xs text-charcoal-soft">({{ l.reviews }})</span></span>
                 <span v-else class="text-xs text-charcoal-soft">—</span>
               </td>
               <td class="text-center">

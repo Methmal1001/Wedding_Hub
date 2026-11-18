@@ -60,7 +60,7 @@
               </h1>
               <p class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/80">
                 <span class="flex items-center gap-1.5"><AppIcon name="mail" :size="15" class="text-gold-light" />{{ user.email }}</span>
-                <span v-if="user.city" class="flex items-center gap-1.5"><AppIcon name="pin" :size="15" class="text-gold-light" />{{ user.city }}</span>
+                <span v-if="user.city" class="flex items-center gap-1.5"><AppIcon name="pin" :size="15" class="text-green-400" />{{ user.city }}</span>
                 <span v-if="user.role === 'vendor' && user.businessName" class="flex items-center gap-1.5"><AppIcon name="store" :size="15" class="text-gold-light" />{{ user.businessName }}</span>
               </p>
             </div>
@@ -213,7 +213,7 @@
                 <h2 class="panel-title">Profile strength</h2>
                 <div class="relative mt-5 h-36 w-36">
                   <svg viewBox="0 0 120 120" class="h-full w-full -rotate-90" aria-hidden="true">
-                    <circle cx="60" cy="60" r="52" fill="none" stroke="#FCF1F2" stroke-width="10" />
+                    <circle cx="60" cy="60" r="52" fill="none" stroke="#F2FBFF" stroke-width="10" />
                     <circle
                       cx="60" cy="60" r="52" fill="none" stroke="url(#ringGrad)" stroke-width="10" stroke-linecap="round"
                       pathLength="100" stroke-dasharray="100" :stroke-dashoffset="100 - completeness"
@@ -221,8 +221,8 @@
                     />
                     <defs>
                       <linearGradient id="ringGrad" x1="0" x2="1" y1="0" y2="1">
-                        <stop offset="0%" stop-color="#B4637A" />
-                        <stop offset="100%" stop-color="#C9A86A" />
+                        <stop offset="0%" stop-color="#0049F2" />
+                        <stop offset="100%" stop-color="#00D2E6" />
                       </linearGradient>
                     </defs>
                   </svg>
@@ -261,7 +261,7 @@
               <CatalogRow v-for="item in saved" :key="item.id" :item="item" />
             </div>
             <div v-else class="empty">
-              <span class="empty-icon"><AppIcon name="heart" :size="28" /></span>
+              <span class="empty-icon !bg-rose-50 !text-rose-500"><AppIcon name="heart" :size="28" /></span>
               <h2 class="mt-5 font-serif text-2xl font-semibold">No saved vendors yet</h2>
               <p class="mt-2 max-w-md text-sm text-charcoal-soft">Tap the heart on any vendor to keep them here for later.</p>
               <NuxtLink to="/catalog" class="btn-primary mt-6">Browse vendors</NuxtLink>
@@ -498,7 +498,7 @@ const profileFields = computed(() => {
 const completeness = computed(() => Math.round((profileFields.value.filter((f) => f.done).length / profileFields.value.length) * 100))
 
 const stats = computed(() => [
-  { label: 'Saved vendors', value: saved.value.length, icon: 'heart', tone: 'bg-rosewood-50 text-rosewood' },
+  { label: 'Saved vendors', value: saved.value.length, icon: 'heart', tone: 'bg-rose-50 text-rose-500' },
   { label: 'Enquiries sent', value: user.value?.enquiries?.length || 0, icon: 'mail', tone: 'bg-gold-light/40 text-gold-dark' },
   user.value?.role === 'couple'
     ? { label: countdown.value?.past ? 'Days married' : 'Days to go', value: countdown.value ? countdown.value.days : '—', icon: 'calendar', tone: 'bg-blush text-rosewood-800' }
@@ -628,7 +628,7 @@ const floatHearts = [
   position: absolute;
   bottom: -20px;
   z-index: -5;
-  color: rgba(247, 225, 227, 0.35);
+  color: rgba(227, 246, 255, 0.35);
   animation: rise linear infinite;
   pointer-events: none;
 }

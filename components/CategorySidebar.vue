@@ -26,7 +26,7 @@
             <p class="text-[10px] font-medium uppercase tracking-[0.28em] text-gold-light">{{ v.category }}</p>
             <h3 class="mt-1.5 font-serif text-2xl font-semibold leading-tight">{{ v.name }}</h3>
             <p class="mt-2 flex items-start gap-1.5 text-xs text-white/75">
-              <AppIcon name="pin" :size="14" class="mt-px shrink-0 text-gold-light" />
+              <AppIcon name="pin" :size="14" class="mt-px shrink-0 text-green-400" />
               {{ v.address }}
             </p>
             <a :href="`tel:${v.phone.replace(/[^\d+]/g, '')}`" class="mt-1 flex items-center gap-1.5 text-xs text-white/75 hover:text-white" :tabindex="i === ad.index ? 0 : -1">

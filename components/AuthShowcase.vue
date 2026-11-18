@@ -34,9 +34,9 @@
       <div class="my-auto py-10">
         <!-- Interlocking rings drawing themselves -->
         <svg viewBox="0 0 120 80" class="rings h-16 w-24" aria-hidden="true">
-          <circle cx="45" cy="48" r="24" pathLength="1" fill="none" stroke="#E6D3A8" stroke-width="2.2" />
-          <circle cx="75" cy="48" r="24" pathLength="1" fill="none" stroke="#F7E1E3" stroke-width="2.2" />
-          <path d="M60 8l5 6-5 6-5-6z" pathLength="1" fill="#E6D3A8" stroke="#E6D3A8" stroke-width="1" />
+          <circle cx="45" cy="48" r="24" pathLength="1" fill="none" stroke="#00F2FF" stroke-width="2.2" />
+          <circle cx="75" cy="48" r="24" pathLength="1" fill="none" stroke="#E3F6FF" stroke-width="2.2" />
+          <path d="M60 8l5 6-5 6-5-6z" pathLength="1" fill="#00F2FF" stroke="#00F2FF" stroke-width="1" />
         </svg>
 
         <Transition name="swap" mode="out-in">
@@ -157,14 +157,14 @@ const petals = [
   top: 8%;
   height: 340px;
   width: 340px;
-  background: #b4637a;
+  background: #0049F2;
 }
 .blob--b {
   bottom: -12%;
   right: -12%;
   height: 380px;
   width: 380px;
-  background: #c9a86a;
+  background: #00D2E6;
   opacity: 0.35;
   animation-delay: -6s;
 }
@@ -179,7 +179,7 @@ const petals = [
   top: -5%;
   z-index: -1;
   border-radius: 150% 0 150% 0;
-  background: linear-gradient(135deg, #f7e1e3, #fff 160%);
+  background: linear-gradient(135deg, #E3F6FF, #fff 160%);
   opacity: 0.55;
   animation: petal-fall linear infinite;
   pointer-events: none;

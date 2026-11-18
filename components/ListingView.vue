@@ -155,7 +155,7 @@
                         role="radio"
                         :aria-checked="review.rating === n"
                         :aria-label="`${n} star${n > 1 ? 's' : ''}`"
-                        class="text-gold transition hover:scale-110"
+                        class="text-amber-400 transition hover:scale-110"
                         @click="review.rating = n"
                       >
                         <AppIcon name="star" :size="24" :filled="n <= review.rating" />
@@ -239,7 +239,7 @@
                   </div>
                 </li>
                 <li class="flex items-start gap-3">
-                  <AppIcon name="pin" :size="18" class="mt-0.5 shrink-0 text-rosewood" />
+                  <AppIcon name="pin" :size="18" class="mt-0.5 shrink-0 text-green-600" />
                   <div>
                     <p class="text-[11px] uppercase tracking-[0.16em] text-charcoal-soft">Address</p>
                     <p class="font-medium text-charcoal">{{ listing.address }}</p>
@@ -286,6 +286,17 @@
                   <AppIcon name="phone" :size="16" />
                   Call {{ listing.phones[0] }}
                 </a>
+                <a
+                  v-if="whatsappLink"
+                  :href="whatsappLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn !min-h-[46px] w-full bg-[#25D366] text-sm text-white shadow-soft hover:-translate-y-0.5 hover:bg-[#1EBE5A] hover:shadow-lift"
+                  :aria-label="`Chat with ${listing.name} on WhatsApp`"
+                >
+                  <AppIcon name="whatsapp" :size="18" />
+                  Chat on WhatsApp
+                </a>
                 <button type="button" class="btn-outline !min-h-[46px] w-full text-sm" @click="jump('enquiry')">
                   <AppIcon name="mail" :size="16" />
                   Send enquiry
@@ -295,11 +306,24 @@
               <div class="border-t border-rosewood/10 px-6 py-5">
                 <p class="text-[11px] uppercase tracking-[0.16em] text-charcoal-soft">Social media</p>
                 <div class="mt-3 flex gap-2">
+                  <a
+                    v-if="whatsappLink"
+                    :href="whatsappLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="social-btn bg-[#25D366]"
+                    :aria-label="`${listing.name} on WhatsApp`"
+                    title="WhatsApp"
+                  >
+                    <AppIcon name="whatsapp" :size="17" />
+                  </a>
                   <button
                     v-for="s in socials"
                     :key="s.icon"
                     type="button"
-                    class="grid h-9 w-9 place-items-center rounded-full ring-1 ring-rosewood/15 text-rosewood transition hover:bg-rosewood hover:text-white"
+                    class="social-btn"
+                    :style="{ background: s.bg }"
+                    :title="s.name"
                     :aria-label="`${listing.name} on ${s.name}`"
                     @click="comingSoon(`${listing.name}'s ${s.name} page`)"
                   >
@@ -405,10 +429,25 @@ const facts = [
   listing.rating && { label: 'Rating', value: `${listing.rating.toFixed(1)} / 5`, icon: 'star' }
 ].filter(Boolean)
 
+// WhatsApp: opens a chat with the vendor's first phone number and a ready
+// message saying the couple found them on Wedding Hub.
+// Sri Lankan numbers: "077 123 4567" or "+94 77 123 4567" -> 94771234567
+const WHATSAPP_MESSAGE = 'Hi, I found you through Wedding Hub and would like to connect with you.'
+const whatsappNumber = (phone) => {
+  let d = String(phone || '').replace(/\D/g, '')
+  if (d.startsWith('940')) d = `94${d.slice(3)}` // "+94 (0)71…"
+  else if (d.startsWith('0')) d = `94${d.slice(1)}`
+  else if (d.length === 9) d = `94${d}`
+  return d.length >= 11 ? d : ''
+}
+const waNumber = whatsappNumber(listing.phones[0])
+const whatsappLink = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}` : ''
+
+// Each network in its own brand colour
 const socials = [
-  { name: 'Facebook', icon: 'facebook' },
-  { name: 'Instagram', icon: 'instagram' },
-  { name: 'YouTube', icon: 'youtube' }
+  { name: 'Facebook', icon: 'facebook', bg: '#1877F2' },
+  { name: 'Instagram', icon: 'instagram', bg: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%)' },
+  { name: 'YouTube', icon: 'youtube', bg: '#FF0000' }
 ]
 
 // Similar categories: this listing's own service first, then related services.
@@ -607,5 +646,8 @@ const submitReview = () => {
 }
 .lb-btn {
   @apply absolute grid h-11 w-11 place-items-center rounded-full bg-white/15 text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white hover:text-rosewood-800;
+}
+.social-btn {
+  @apply grid h-9 w-9 place-items-center rounded-full text-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-lift hover:brightness-110;
 }
 </style>

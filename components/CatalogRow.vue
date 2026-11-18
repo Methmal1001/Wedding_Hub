@@ -46,7 +46,7 @@
         <button
           type="button"
           class="grid h-9 w-9 shrink-0 place-items-center rounded-full ring-1 transition hover:scale-110"
-          :class="fav ? 'bg-rosewood text-white ring-rosewood' : 'bg-white text-rosewood ring-rosewood/20'"
+          :class="fav ? 'bg-rose-50 text-rose-600 ring-rose-300' : 'bg-white text-rose-500 ring-rose-200 hover:bg-rose-50'"
           :aria-pressed="fav"
           :aria-label="fav ? `Remove ${item.name} from favourites` : `Save ${item.name} to favourites`"
           @click="toggleFavourite(item)"
@@ -58,14 +58,14 @@
       <p class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-charcoal-soft">
         <template v-if="item.rating">
           <span class="flex items-center gap-1 font-semibold text-charcoal">
-            <AppIcon name="star" :size="14" filled class="text-gold" />
+            <AppIcon name="star" :size="14" filled class="text-amber-400" />
             {{ item.rating.toFixed(1) }}
             <span v-if="item.reviews" class="font-normal text-charcoal-soft">({{ item.reviews }})</span>
           </span>
           <span class="text-charcoal-soft/50">•</span>
         </template>
         <span class="flex items-center gap-1">
-          <AppIcon name="pin" :size="14" class="text-rosewood" />
+          <AppIcon name="pin" :size="14" class="text-green-600" />
           {{ item.area || item.location }}
         </span>
       </p>

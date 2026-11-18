@@ -8,7 +8,7 @@
         class="parallax-img absolute inset-0 -z-10 h-[120%] w-full object-cover"
         :style="{ transform: `translate3d(0, ${offset}px, 0)` }"
       >
-      <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#241319]/85 via-[#3a1d29]/55 to-[#3a1d29]/10" />
+      <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#03102E]/85 via-[#0A1F5C]/55 to-[#0A1F5C]/10" />
 
       <div class="grid items-center gap-10 px-6 py-20 sm:px-12 sm:py-24 lg:grid-cols-[1.2fr_1fr] lg:px-20 lg:py-32">
         <div v-reveal class="max-w-xl text-white">
