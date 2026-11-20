@@ -29,6 +29,30 @@
       <section class="container-site py-10 sm:py-12">
         <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] xl:gap-10">
           <div class="min-w-0 space-y-8">
+            <!-- Photos -->
+            <article id="photos" class="panel">
+              <div class="flex items-end justify-between gap-3">
+                <h2 class="panel-title">Photo gallery</h2>
+                <span class="text-xs text-charcoal-soft">{{ photos.length }} photos</span>
+              </div>
+              <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <button
+                  v-for="(src, i) in photos"
+                  :key="src"
+                  type="button"
+                  class="group relative overflow-hidden rounded-2xl"
+                  :class="i === 0 ? 'col-span-2 aspect-[4/3] sm:row-span-2 sm:aspect-auto' : 'aspect-square'"
+                  :aria-label="`Open photo ${i + 1}`"
+                  @click="openLightbox(i)"
+                >
+                  <img :src="src" :alt="`${listing.name} photo ${i + 1}`" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy">
+                  <span class="absolute inset-0 grid place-items-center bg-rosewood-900/0 text-white opacity-0 transition group-hover:bg-rosewood-900/30 group-hover:opacity-100">
+                    <AppIcon name="search" :size="22" />
+                  </span>
+                </button>
+              </div>
+            </article>
+
             <!-- Overview -->
             <article id="overview" class="panel">
               <p class="eyebrow">{{ listing.categoryName }}</p>
@@ -65,30 +89,6 @@
                   <li v-for="o in listing.offerings" :key="o" class="rounded-full bg-gold-light/40 px-3.5 py-1.5 text-[13px] font-medium text-rosewood-800 ring-1 ring-gold/30">{{ o }}</li>
                 </ul>
               </template>
-            </article>
-
-            <!-- Photos -->
-            <article id="photos" class="panel">
-              <div class="flex items-end justify-between gap-3">
-                <h2 class="panel-title">Photo gallery</h2>
-                <span class="text-xs text-charcoal-soft">{{ photos.length }} photos</span>
-              </div>
-              <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <button
-                  v-for="(src, i) in photos"
-                  :key="src"
-                  type="button"
-                  class="group relative overflow-hidden rounded-2xl"
-                  :class="i === 0 ? 'col-span-2 aspect-[4/3] sm:row-span-2 sm:aspect-auto' : 'aspect-square'"
-                  :aria-label="`Open photo ${i + 1}`"
-                  @click="openLightbox(i)"
-                >
-                  <img :src="src" :alt="`${listing.name} photo ${i + 1}`" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy">
-                  <span class="absolute inset-0 grid place-items-center bg-rosewood-900/0 text-white opacity-0 transition group-hover:bg-rosewood-900/30 group-hover:opacity-100">
-                    <AppIcon name="search" :size="22" />
-                  </span>
-                </button>
-              </div>
             </article>
 
             <!-- Reviews -->
@@ -225,9 +225,9 @@
           <!-- Contact details -->
           <aside class="lg:sticky lg:top-[140px] lg:self-start">
             <div class="panel !p-0 overflow-hidden">
-              <div class="bg-gradient-to-br from-rosewood to-rosewood-800 px-6 py-5 text-white">
-                <p class="text-[11px] uppercase tracking-[0.24em] text-gold-light">{{ listing.priceValue ? 'Starting from' : 'Pricing' }}</p>
-                <p class="mt-1 font-serif text-3xl font-semibold">{{ listing.price }}</p>
+              <div class="lux-gold px-6 py-5 !shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(120,80,10,0.3)]">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#6b4a0e]">{{ listing.priceValue ? 'Starting from' : 'Pricing' }}</p>
+                <p class="mt-1 font-serif text-3xl font-semibold text-[#2e1f04] [text-shadow:0_1px_0_rgba(255,255,255,0.35)]">{{ listing.price }}</p>
               </div>
 
               <ul class="space-y-4 px-6 py-6 text-sm">
@@ -281,7 +281,7 @@
                 <a
                   v-if="listing.phones.length"
                   :href="`tel:${listing.phones[0].replace(/[^\d+]/g, '')}`"
-                  class="btn-primary !min-h-[46px] w-full text-sm"
+                  class="btn !min-h-[46px] w-full border-2 border-rosewood bg-transparent text-sm text-rosewood hover:-translate-y-0.5 hover:bg-rosewood hover:text-white hover:shadow-lift"
                 >
                   <AppIcon name="phone" :size="16" />
                   Call {{ listing.phones[0] }}
@@ -291,7 +291,7 @@
                   :href="whatsappLink"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn !min-h-[46px] w-full bg-[#25D366] text-sm text-white shadow-soft hover:-translate-y-0.5 hover:bg-[#1EBE5A] hover:shadow-lift"
+                  class="btn !min-h-[46px] w-full border-2 border-[#25D366] bg-transparent text-sm text-[#128C4A] hover:-translate-y-0.5 hover:bg-[#25D366] hover:text-white hover:shadow-lift"
                   :aria-label="`Chat with ${listing.name} on WhatsApp`"
                 >
                   <AppIcon name="whatsapp" :size="18" />
@@ -359,27 +359,66 @@
       </section>
     </main>
 
-    <!-- Lightbox -->
+    <!-- Lightbox: neutral dark viewer; the backdrop takes its colours from the photo itself -->
     <Transition name="fade">
       <div
         v-if="lightbox !== null"
-        class="fixed inset-0 z-[90] flex items-center justify-center bg-rosewood-900/90 p-4 backdrop-blur-sm"
+        class="fixed inset-0 z-[90] overflow-hidden bg-[#0b0b0d]"
         role="dialog"
         aria-modal="true"
         :aria-label="`${listing.name} photo ${lightbox + 1} of ${photos.length}`"
-        @click.self="lightbox = null"
       >
-        <img :src="photos[lightbox]" :alt="`${listing.name} photo ${lightbox + 1}`" class="max-h-[82vh] max-w-full rounded-2xl object-contain shadow-lift">
-        <button type="button" class="lb-btn right-4 top-4" aria-label="Close" @click="lightbox = null">
-          <AppIcon name="close" :size="20" />
-        </button>
-        <button type="button" class="lb-btn left-4 top-1/2 -translate-y-1/2" aria-label="Previous photo" @click="stepLightbox(-1)">
+        <!-- ambient backdrop: the current photo, heavily blurred and dimmed -->
+        <Transition name="lb-bg">
+          <img :key="'bg' + lightbox" :src="photos[lightbox]" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full scale-125 object-cover opacity-45 blur-3xl saturate-150">
+        </Transition>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/70" />
+
+        <!-- top bar -->
+        <div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          <p class="min-w-0 truncate text-sm font-medium text-white/90">
+            {{ listing.name }}
+            <span class="ml-2 rounded-full bg-white/10 px-2.5 py-0.5 text-xs text-white/75 ring-1 ring-white/15">{{ lightbox + 1 }} / {{ photos.length }}</span>
+          </p>
+          <button type="button" class="lb-btn relative" aria-label="Close" @click="lightbox = null">
+            <AppIcon name="close" :size="20" />
+          </button>
+        </div>
+
+        <!-- photo -->
+        <div class="absolute inset-0 flex items-center justify-center px-4 pb-28 pt-20 sm:px-20" @click.self="lightbox = null">
+          <Transition name="lb-fade" mode="out-in">
+            <img
+              :key="lightbox"
+              :src="photos[lightbox]"
+              :alt="`${listing.name} photo ${lightbox + 1}`"
+              class="max-h-full max-w-full rounded-xl object-contain shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
+            >
+          </Transition>
+        </div>
+
+        <button type="button" class="lb-btn absolute left-3 top-1/2 z-10 -translate-y-1/2 sm:left-6" aria-label="Previous photo" @click="stepLightbox(-1)">
           <AppIcon name="arrowRight" :size="18" class="rotate-180" />
         </button>
-        <button type="button" class="lb-btn right-4 top-1/2 -translate-y-1/2" aria-label="Next photo" @click="stepLightbox(1)">
+        <button type="button" class="lb-btn absolute right-3 top-1/2 z-10 -translate-y-1/2 sm:right-6" aria-label="Next photo" @click="stepLightbox(1)">
           <AppIcon name="arrowRight" :size="18" />
         </button>
-        <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-sm text-white/80">{{ lightbox + 1 }} / {{ photos.length }}</p>
+
+        <!-- thumbnails -->
+        <div class="absolute inset-x-0 bottom-0 z-10 flex justify-center gap-2 overflow-x-auto px-4 pb-5 pt-3">
+          <button
+            v-for="(ph, i) in photos"
+            :key="ph + i"
+            type="button"
+            class="h-14 w-14 shrink-0 overflow-hidden rounded-lg ring-2 transition sm:h-16 sm:w-16"
+            :class="i === lightbox ? 'opacity-100 ring-white' : 'opacity-50 ring-transparent hover:opacity-90'"
+            :aria-label="`Show photo ${i + 1}`"
+            :aria-current="i === lightbox"
+            @click="lightbox = i"
+          >
+            <img :src="ph" alt="" class="h-full w-full object-cover" loading="lazy">
+          </button>
+        </div>
       </div>
     </Transition>
 
@@ -461,13 +500,13 @@ const similar = (() => {
 
 // --- Tabs + scroll spy -------------------------------------------------------
 const tabs = [
+  { id: 'photos', label: 'Photos', icon: 'image' },
   { id: 'overview', label: 'Overview', icon: 'compass' },
   { id: 'services', label: 'Services', icon: 'check' },
-  { id: 'photos', label: 'Photos', icon: 'image' },
   { id: 'reviews', label: 'Reviews', icon: 'star' },
   { id: 'enquiry', label: 'Enquiry', icon: 'mail' }
 ]
-const activeTab = ref('overview')
+const activeTab = ref('photos')
 const OFFSET = 140 // fixed header + sticky tabs
 const jump = (id) => {
   const el = document.getElementById(id)
@@ -645,7 +684,24 @@ const submitReview = () => {
   @apply relative rounded-2xl bg-white p-2 ring-1 ring-charcoal/10 transition duration-300 hover:-translate-y-0.5 hover:shadow-soft hover:ring-rosewood/30;
 }
 .lb-btn {
-  @apply absolute grid h-11 w-11 place-items-center rounded-full bg-white/15 text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white hover:text-rosewood-800;
+  @apply grid h-11 w-11 place-items-center rounded-full bg-black/35 text-white ring-1 ring-white/20 backdrop-blur-md transition hover:bg-white hover:text-black;
+}
+.lb-bg-enter-active,
+.lb-bg-leave-active {
+  transition: opacity 0.6s ease;
+}
+.lb-bg-enter-from,
+.lb-bg-leave-to {
+  opacity: 0 !important;
+}
+.lb-fade-enter-active,
+.lb-fade-leave-active {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.lb-fade-enter-from,
+.lb-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.98);
 }
 .social-btn {
   @apply grid h-9 w-9 place-items-center rounded-full text-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-lift hover:brightness-110;

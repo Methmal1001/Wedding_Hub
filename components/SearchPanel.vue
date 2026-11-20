@@ -1,19 +1,19 @@
 <template>
   <form
-    class="search-panel relative rounded-[28px] bg-white/95 p-2.5 shadow-lift ring-1 ring-white/60 backdrop-blur-md sm:p-3"
+    class="search-panel relative rounded-[24px] bg-white/95 p-2 shadow-lift ring-1 ring-white/60 backdrop-blur-md sm:rounded-[28px] sm:p-3"
     role="search"
     aria-label="Search wedding vendors and venues"
     @submit.prevent="submit"
   >
-    <div class="grid gap-2 md:grid-cols-[1.35fr_1fr_auto] md:gap-0">
+    <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-2 md:grid-cols-[1.35fr_1fr_auto] md:gap-0">
       <!-- What -->
-      <div class="relative">
+      <div class="relative col-span-2 md:col-span-1">
         <label
           for="search-what"
-          class="field rounded-[20px] md:rounded-r-none"
+          class="field rounded-[18px] sm:rounded-[20px] md:rounded-r-none"
           :class="{ 'ring-2 ring-gold/40': focused === 'what' }"
         >
-          <AppIcon name="search" :size="20" class="shrink-0 text-gold-dark" />
+          <span class="icon-tile bg-gradient-to-br from-rosewood-50 to-gold-light/20 text-rosewood"><AppIcon name="search" :size="18" /></span>
           <span class="min-w-0 flex-1">
             <span class="field-label">Search what?</span>
             <input
@@ -75,10 +75,10 @@
       <!-- Location -->
       <label
         for="search-location"
-        class="field relative rounded-[20px] md:rounded-none md:border-l md:border-rosewood/10"
+        class="field relative rounded-[18px] sm:rounded-[20px] md:rounded-none md:border-l md:border-rosewood/10"
         :class="{ 'ring-2 ring-gold/40': focused === 'loc' }"
       >
-        <AppIcon name="pin" :size="20" class="shrink-0 text-green-600" />
+        <span class="icon-tile bg-gradient-to-br from-green-50 to-[#4DFF00]/15 text-green-600"><AppIcon name="pin" :size="18" /></span>
         <span class="min-w-0 flex-1">
           <span class="field-label">Location</span>
           <select
@@ -96,20 +96,20 @@
       </label>
 
       <!-- Submit -->
-      <button type="submit" class="btn-primary btn-shine !min-h-[60px] !rounded-[20px] !px-8 md:!ml-2">
-        <AppIcon name="search" :size="18" />
-        Search
+      <button type="submit" class="btn !min-h-[46px] self-center !rounded-2xl border-2 border-rosewood bg-transparent !px-3.5 !text-sm text-rosewood hover:-translate-y-0.5 hover:bg-rosewood hover:text-white hover:shadow-lift focus-visible:bg-rosewood focus-visible:text-white sm:!min-h-[48px] sm:!px-5 md:!mx-2" aria-label="Search">
+        <AppIcon name="search" :size="16" />
+        <span class="hidden sm:inline">Search</span>
       </button>
     </div>
 
     <!-- Popular searches -->
-    <div v-if="showPopular" class="flex flex-wrap items-center gap-2 px-2 pb-1 pt-3 text-xs">
-      <span class="text-charcoal-soft">Popular:</span>
+    <div v-if="showPopular" class="hidden flex-wrap items-center gap-2 px-2 pb-1 pt-3 text-xs sm:flex">
+      <span class="inline-flex items-center gap-1.5 font-medium text-charcoal-soft"><AppIcon name="trending" :size="14" class="text-gold-dark" />Popular:</span>
       <button
         v-for="p in popular"
         :key="p.label"
         type="button"
-        class="rounded-full border border-rosewood/10 bg-ivory px-3 py-1.5 text-charcoal transition hover:border-rosewood hover:bg-rosewood hover:text-white"
+        class="rounded-full bg-white px-3 py-1.5 text-charcoal shadow-sm ring-1 ring-rosewood/10 transition hover:-translate-y-0.5 hover:bg-gradient-to-r hover:from-gold-light hover:to-[#4DFF00] hover:text-rosewood-900 hover:ring-transparent"
         @click="quick(p)"
       >
         {{ p.label }}
@@ -195,12 +195,15 @@ const onBlur = () => {
 
 <style scoped>
 .field {
-  @apply flex min-h-[60px] cursor-text items-center gap-3 bg-ivory px-4 transition-shadow duration-300 md:bg-transparent;
+  @apply flex min-h-[50px] cursor-text items-center gap-3 bg-ivory px-3.5 transition-shadow duration-300 sm:min-h-[60px] sm:px-4 md:bg-transparent;
 }
 .field-label {
   @apply block text-[10px] font-semibold uppercase tracking-[0.2em] text-rosewood;
 }
 .field-input {
   @apply mt-0.5 block w-full border-0 bg-transparent p-0 text-[15px] text-charcoal placeholder:text-charcoal-soft/60 focus:outline-none focus:ring-0;
+}
+.icon-tile {
+  @apply grid h-9 w-9 shrink-0 place-items-center rounded-xl ring-1 ring-black/[0.03] sm:h-10 sm:w-10;
 }
 </style>

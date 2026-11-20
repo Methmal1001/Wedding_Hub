@@ -206,7 +206,7 @@
 <script setup>
 import { locations } from '~/data/locations'
 import { liveCatalog } from '~/composables/useSiteData'
-import { filterCatalog, sortOptions, catalogLink, findSubBySlug } from '~/composables/useCatalog'
+import { filterCatalog, sortOptions, catalogLink, findSubBySlug, normaliseSort } from '~/composables/useCatalog'
 import { subSlides, categoryTagline, relatedSubTiles } from '~/composables/useCategoryPage'
 
 useSplash().finish()
@@ -239,7 +239,7 @@ const slides = computed(() => subSlides(category.value.key, sub.value))
 const filters = computed(() => ({
   q: String(route.query.q || ''),
   loc: String(route.query.loc || ''),
-  sort: String(route.query.sort || 'recommended'),
+  sort: normaliseSort(String(route.query.sort || 'recommended')),
   page: Math.max(1, parseInt(route.query.page, 10) || 1)
 }))
 

@@ -114,11 +114,20 @@
           <span class="grid h-16 w-16 place-items-center rounded-full bg-rosewood-50 text-rosewood">
             <AppIcon name="search" :size="26" />
           </span>
-          <h2 class="mt-5 font-serif text-2xl font-semibold">No professionals found</h2>
-          <p class="mt-2 max-w-md text-charcoal-soft">
-            Try a different search or location.
-          </p>
-          <button type="button" class="btn-primary mt-6" @click="clearAll">Show all professionals</button>
+          <template v-if="starFilter">
+            <h2 class="mt-5 font-serif text-2xl font-semibold">No {{ starFilter }}-star professionals yet</h2>
+            <p class="mt-2 max-w-md text-charcoal-soft">
+              None of the matching professionals currently has a {{ starFilter }}-star rating. Try another rating or see them all.
+            </p>
+            <button type="button" class="btn-primary mt-6" @click="update({ sort: 'all' })">Show all ratings</button>
+          </template>
+          <template v-else>
+            <h2 class="mt-5 font-serif text-2xl font-semibold">No professionals found</h2>
+            <p class="mt-2 max-w-md text-charcoal-soft">
+              Try a different search or location.
+            </p>
+            <button type="button" class="btn-primary mt-6" @click="clearAll">Show all professionals</button>
+          </template>
         </div>
 
         <div v-if="visible.length < results.length" class="mt-12 flex justify-center">
@@ -139,7 +148,7 @@
 import CatalogHero from '~/components/CatalogHero.vue'
 import CategoryHero from '~/components/CategoryHero.vue'
 import { locations } from '~/data/locations'
-import { filterCatalog, sortOptions, catalogLink } from '~/composables/useCatalog'
+import { filterCatalog, sortOptions, catalogLink, normaliseSort } from '~/composables/useCatalog'
 import { weddingCategories } from '~/data/weddingCategories'
 import { categorySlides, categoryTagline, subcategoryTiles } from '~/composables/useCategoryPage'
 
@@ -165,7 +174,7 @@ const filters = computed(() => ({
   loc: String(route.query.loc || ''),
   category: String(route.query.category || ''),
   sub: String(route.query.sub || ''),
-  sort: String(route.query.sort || 'recommended')
+  sort: normaliseSort(String(route.query.sort || 'recommended'))
 }))
 
 const activeCategory = computed(() => weddingCategories.find((category) => category.key === filters.value.category) || null)
@@ -182,6 +191,8 @@ const activeSubcategories = computed(() => activeCategory.value ? subcategoryTil
 // If a sub-category has no listings yet, fall back to its whole category
 // and tell the user, instead of showing an empty page.
 const exact = computed(() => filterCatalog(filters.value))
+// e.g. 4 when the rating dropdown is set to '4 stars'
+const starFilter = computed(() => (String(filters.value.sort).startsWith('stars-') ? Number(filters.value.sort.split('-')[1]) : 0))
 const subFallback = computed(() => !!filters.value.sub && exact.value.length === 0)
 const results = computed(() =>
   subFallback.value ? filterCatalog({ ...filters.value, sub: '' }) : exact.value

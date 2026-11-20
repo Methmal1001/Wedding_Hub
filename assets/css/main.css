@@ -359,3 +359,30 @@ section[id] {
     transform: translateY(10px);
   }
 }
+
+/* ---- Rich gold (premium accents: price panel, "Add Your Listing") ---- */
+.lux-gold {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: #3a2706;
+  background: linear-gradient(135deg, #fff1b8 0%, #f6d46b 20%, #e6ac32 45%, #c78a1c 68%, #f3cf6f 88%, #fff0b3 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(120, 80, 10, 0.35), 0 12px 30px -12px rgba(176, 121, 20, 0.55);
+}
+/* slow light sweep across the metal */
+.lux-gold::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.55) 48%, transparent 66%);
+  transform: translateX(-120%);
+  animation: lux-sheen 4.5s ease-in-out infinite;
+}
+@keyframes lux-sheen {
+  0%, 55% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lux-gold::after { animation: none; }
+}

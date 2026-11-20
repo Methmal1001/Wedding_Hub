@@ -1,5 +1,5 @@
 <template>
-  <section id="home" class="relative isolate z-10 flex flex-col bg-white [overflow-x:clip] pb-10 pt-10 sm:pb-12 sm:pt-12 lg:min-h-[calc(100svh-108px)] lg:justify-center lg:pb-10 lg:pt-12">
+  <section id="home" class="relative isolate z-10 flex flex-col bg-white [overflow-x:clip] pb-10 pt-4 sm:pb-12 sm:pt-7 lg:min-h-[calc(100svh-108px)] lg:justify-start lg:pb-10 lg:pt-7">
     <!-- ===== Background: wedding rings gently floating down ===== -->
     <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
       <span class="absolute -right-32 -top-40 h-[520px] w-[520px] rounded-full bg-gold-light/10 blur-3xl" />
@@ -57,6 +57,26 @@
     <h1 class="sr-only">Wedding Hub – everything you need for your perfect wedding in Sri Lanka</h1>
 
     <div class="w-full">
+      <!-- Search (placed above the banner) – highlighted with a greeting and glowing border for signed-in users -->
+      <div class="container-site relative z-20 mb-6 sm:mb-10 lg:mb-14" :class="ready ? 'hero-in' : 'opacity-0'">
+        <div style="animation-delay: 0.1s">
+          <Transition name="greet">
+            <div v-if="user" class="mb-2 flex flex-wrap items-center justify-between gap-2 px-1 sm:mb-3">
+              <p class="flex items-center gap-2 text-sm text-charcoal sm:gap-2.5 sm:text-[15px]">
+                <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-gold-light to-[#4DFF00] text-rosewood-900 sm:h-8 sm:w-8">
+                  <AppIcon name="sparkles" :size="16" />
+                </span>
+                <span>Welcome back, <strong class="font-semibold text-rosewood">{{ firstName }}</strong><span class="hidden sm:inline"> – what are you looking for today?</span></span>
+              </p>
+              <NuxtLink to="/profile" class="hidden text-sm font-medium text-rosewood underline-offset-4 hover:underline sm:inline">My saved vendors →</NuxtLink>
+            </div>
+          </Transition>
+          <div class="search-shell is-on" :class="{ 'is-spot': spotlight }">
+            <span class="shell-border" aria-hidden="true" />
+            <SearchPanel />
+          </div>
+        </div>
+      </div>
       <!-- banner row is wider than the page container: it uses the free side space -->
       <div
         class="mx-auto grid w-full max-w-[1680px] items-center gap-10 px-4 sm:px-6 lg:px-8 xl:px-10 lg:grid-cols-[minmax(0,1.95fr)_minmax(0,1fr)] lg:gap-10 xl:gap-12"
@@ -76,7 +96,7 @@
           <span aria-hidden="true" class="absolute -left-5 -top-5 hidden h-28 w-28 rounded-[28px] border-2 border-dashed border-gold/50 sm:block" />
           <span aria-hidden="true" class="absolute -bottom-6 -right-6 hidden h-40 w-40 rounded-full bg-[radial-gradient(#0049F2_1.5px,transparent_1.5px)] [background-size:14px_14px] opacity-25 sm:block" />
           <div
-            class="image-frame relative aspect-[4/3] overflow-hidden rounded-[32px] bg-rosewood-50 shadow-lift ring-4 ring-white sm:aspect-[16/9] lg:aspect-auto lg:h-[clamp(320px,calc(100svh-470px),540px)]"
+            class="image-frame relative aspect-[4/3] overflow-hidden rounded-[32px] bg-rosewood-50 shadow-lift ring-4 ring-white sm:aspect-[16/9] lg:aspect-auto lg:h-[clamp(300px,calc(100svh-440px),640px)]"
             @touchstart.passive="onTouchStart"
             @touchend="onTouchEnd"
           >
@@ -214,26 +234,6 @@
         </div>
       </div>
 
-      <!-- Search – highlighted with a greeting and glowing border for signed-in users -->
-      <div class="container-site relative z-20 mt-10 lg:mt-10" :class="ready ? 'hero-in' : 'opacity-0'">
-        <div style="animation-delay: 0.6s">
-          <Transition name="greet">
-            <div v-if="user" class="mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
-              <p class="flex items-center gap-2.5 text-[15px] text-charcoal">
-                <span class="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-gold-light to-[#4DFF00] text-rosewood-900">
-                  <AppIcon name="sparkles" :size="16" />
-                </span>
-                <span>Welcome back, <strong class="font-semibold text-rosewood">{{ firstName }}</strong> – what are you looking for today?</span>
-              </p>
-              <NuxtLink to="/profile" class="text-sm font-medium text-rosewood underline-offset-4 hover:underline">My saved vendors →</NuxtLink>
-            </div>
-          </Transition>
-          <div class="search-shell" :class="{ 'is-on': user, 'is-spot': spotlight }">
-            <span v-if="user" class="shell-border" aria-hidden="true" />
-            <SearchPanel />
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 </template>
@@ -490,21 +490,30 @@ onBeforeUnmount(() => main.stop())
   box-shadow: 0 0 0 6px rgba(0, 210, 230, 0.12), 0 24px 60px -18px rgba(0, 73, 242, 0.45);
 }
 /* rotating brand-colour border */
-/* border layer is clipped on its own so the search dropdowns can overflow */
+/* flowing brand-colour ring (clipped on its own so dropdowns can overflow) */
 .shell-border {
   position: absolute;
   inset: 0;
   z-index: -1;
-  overflow: hidden;
   border-radius: inherit;
+  background: linear-gradient(90deg, #0049f2, #00f2ff, #4dff00, #00f2ff, #0049f2, #00f2ff, #4dff00);
+  background-size: 300% 100%;
+  animation: border-flow 6s linear infinite;
 }
-.shell-border::before {
+.shell-border::after {
   content: '';
   position: absolute;
-  inset: -150%;
+  inset: -6px;
   z-index: -1;
-  background: conic-gradient(from 0deg, #0049f2, #00f2ff, #4dff00, #00f2ff, #0049f2);
-  animation: border-spin 5s linear infinite;
+  border-radius: 36px;
+  background: inherit;
+  background-size: inherit;
+  animation: inherit;
+  filter: blur(14px);
+  opacity: 0.35;
+}
+@keyframes border-flow {
+  to { background-position: 300% 0; }
 }
 .search-shell.is-on :deep(.search-panel) {
   background: #fff;
@@ -570,7 +579,7 @@ onBeforeUnmount(() => main.stop())
 @media (prefers-reduced-motion: reduce) {
   .ring-fall, .sparkle { display: none; }
   .badge-float { animation: none; }
-  .shell-border::before, .search-shell.is-spot { animation: none; }
+  .shell-border, .shell-border::after, .search-shell.is-spot { animation: none; }
   .copy.is-active > * { animation: none; opacity: 1; transform: none; }
   .slide-img { transition: none; transform: none; }
 }

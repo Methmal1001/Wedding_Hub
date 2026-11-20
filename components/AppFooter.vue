@@ -77,7 +77,7 @@
               <span>Mon – Sat, 9.00 am – 6.00 pm</span>
             </li>
           </ul>
-          <button type="button" class="btn-gold mt-6 !min-h-[44px] !px-6 text-[13px]" @click="follow({ to: '/list-your-business#apply' })">
+          <button type="button" class="btn lux-gold mt-6 !min-h-[44px] !px-6 text-[13px] font-semibold hover:-translate-y-0.5 hover:brightness-105" @click="follow({ to: '/list-your-business#apply' })">
             <AppIcon name="store" :size="16" />
             Add Your Listing
           </button>

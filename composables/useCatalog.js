@@ -41,12 +41,43 @@ const synonyms = {
   registration: 'registrar'
 }
 
+// One dropdown that both orders and filters by star rating.
 export const sortOptions = [
   { value: 'recommended', label: 'Recommended' },
-  { value: 'rating', label: 'Top rated' },
-  { value: 'price-asc', label: 'Price: low to high' },
-  { value: 'price-desc', label: 'Price: high to low' }
+  { value: 'all', label: 'All ratings' },
+  { value: 'stars-5', label: '★★★★★  5 stars' },
+  { value: 'stars-4', label: '★★★★☆  4 stars' },
+  { value: 'stars-3', label: '★★★☆☆  3 stars' },
+  { value: 'stars-2', label: '★★☆☆☆  2 stars' },
+  { value: 'stars-1', label: '★☆☆☆☆  1 star' }
 ]
+
+// Old links (?sort=rating / price-asc / price-desc) still work.
+export const normaliseSort = (sort) => {
+  if (sort === 'rating') return 'all'
+  return sortOptions.some((o) => o.value === sort) ? sort : 'recommended'
+}
+
+// A listing counts as "N stars" when its rating rounds to N
+// (4.5–5.0 = 5 stars, 3.5–4.4 = 4 stars, …) – the same way stars are shown.
+export const starBand = (rating) => (rating ? Math.min(5, Math.max(1, Math.round(rating))) : 0)
+
+// ---- "Recommended" ranking ----
+// 1. Featured listings (chosen in the admin panel) always come first.
+// 2. Then a trust score: the rating, weighted by how many reviews back it up
+//    (a 4.9 from 200 reviews beats a 5.0 from 3), plus a small boost for
+//    listings the admin team has verified.
+// 3. New listings without reviews yet sit just below well-reviewed ones.
+const PRIOR_RATING = 4.2 // typical rating on the site
+const PRIOR_WEIGHT = 25 // reviews needed before a listing's own rating dominates
+export const recommendedScore = (item) => {
+  const n = item.reviews || 0
+  const trust = item.rating
+    ? (n / (n + PRIOR_WEIGHT)) * item.rating + (PRIOR_WEIGHT / (n + PRIOR_WEIGHT)) * PRIOR_RATING
+    : 3.6
+  return (item.featured ? 100 : 0) + (item.verified ? 0.3 : 0) + trust
+}
+const byRating = (a, b) => (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0)
 
 const normalise = (s) => (s || '').toString().toLowerCase().trim()
 
@@ -56,14 +87,6 @@ const haystack = (item) =>
   normalise(
     [item.name, item.owner, categoryName(item.categoryKey), item.categoryKey, item.sub, item.location, item.area].join(' ')
   )
-
-// Listings with "price on request" always sort after priced listings.
-const byPrice = (dir) => (a, b) => {
-  if (a.priceValue == null && b.priceValue == null) return 0
-  if (a.priceValue == null) return 1
-  if (b.priceValue == null) return -1
-  return dir * (a.priceValue - b.priceValue)
-}
 
 export function filterCatalog({ q = '', loc = '', category = '', sub = '', sort = 'recommended' } = {}) {
   const terms = normalise(q).split(/\s+/).filter((t) => t.length > 1)
@@ -81,12 +104,13 @@ export function filterCatalog({ q = '', loc = '', category = '', sub = '', sort 
     return textOk && locOk && catOk && subOk
   })
 
-  // Featured listings (set in the admin panel) come first.
-  const sorted = [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
-  if (sort === 'rating') sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0))
-  else if (sort === 'price-asc') sorted.sort(byPrice(1))
-  else if (sort === 'price-desc') sorted.sort(byPrice(-1))
-  return sorted
+  const mode = normaliseSort(sort)
+  if (mode === 'recommended') return [...list].sort((a, b) => recommendedScore(b) - recommendedScore(a))
+  // "All ratings": every listing, highest rated first (unrated last)
+  if (mode === 'all') return [...list].sort(byRating)
+  // "N stars": only listings in that star band
+  const n = Number(mode.split('-')[1])
+  return list.filter((item) => starBand(item.rating) === n).sort(byRating)
 }
 
 // URL slug for a sub-category, matching weddingdirectory.lk
